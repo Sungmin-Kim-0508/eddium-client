@@ -7,6 +7,10 @@
 /* Stop purging. */
 
 /* Write your own custom component styles here */
+html {
+  font-family: sohne, "Helvetica Neue", Helvetica, Arial, sans-serif
+}
+
 .btn-blue {
   @apply bg-blue-500 text-white font-bold py-2 px-4 rounded;
 }
