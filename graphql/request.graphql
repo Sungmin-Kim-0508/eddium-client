@@ -1,0 +1,10 @@
+####### Mutation #######
+mutation Register($firstName: String!, $lastName: String!, $email: String!, $password: String!, $confirmedPassword: String!) {
+  register(email: $email, firstName: $firstName, lastName: $lastName, password: $password, confirmedPassword: $confirmedPassword) {
+    user { id }
+    errors { field, message }
+  }
+}
+
+
+####### Query #######

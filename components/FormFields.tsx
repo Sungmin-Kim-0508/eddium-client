@@ -11,7 +11,7 @@ export const TextInput: React.FC<InputFieldProps> = ({ type, placeholder, classN
   return (
     <>
       <div className="mb-6">
-        <Field {...field} placeholder={placeholder} className="border-b-2 focus:outline-none py-2 px-4 w-11/12 ml-3" />
+        <Field {...field} type={type} placeholder={placeholder} className="border-b-2 focus:outline-none py-2 px-4 w-11/12 ml-3" />
         {touched && error && <p className="text-red-500 text-xs italic ml-6">{error}</p>}
       </div>
     </>
