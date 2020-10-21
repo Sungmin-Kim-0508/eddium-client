@@ -30,7 +30,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
   
   return (
     <Layout bgColor="bg-mediumPrimary">
-      <div className="grid grid-cols-2 grid-rows-1">
+      <div className="grid grid-cols-2 grid-flow-row">
         <div className="flex flex-col justify-center content-center">
           <h1 className="text-center text-6xl font-bold font-display">Join Eddium.</h1>
           <p className="text-center text-2xl mb-3">A place where your words matter.</p>

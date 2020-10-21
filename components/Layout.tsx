@@ -9,7 +9,7 @@ const Layout: React.FC<LayoutProps> = ({ children, bgColor }) => {
   return (
     <>
       <Nav />
-      <div className={`px-40 py-5 h-screen ${bgColor}`}>
+      <div className={`md:px-10 lg:px-40 py-5 h-screen ${bgColor}`}>
         {children}
       </div>
     </>
