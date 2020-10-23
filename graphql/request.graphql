@@ -25,6 +25,10 @@ mutation Login($email: String!, $password: String!) {
   }
 }
 
+mutation Logout {
+  logout
+}
+
 
 ####### Query #######
 query Me {
