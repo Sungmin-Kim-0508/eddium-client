@@ -5,6 +5,8 @@ import { Formik, Form } from 'formik'
 import * as yup from "yup";
 import { useRegisterMutation } from '../generated/graphql';
 import { toastNotification } from '../utils/toasters'
+import Link from 'next/link';
+import { useRouter } from 'next/router'
 
 type RegisterProps = {
 }
@@ -26,16 +28,19 @@ const validationSchema = yup.object({
 })
 
 const Register: React.FC<RegisterProps> = ({}) => {
-  const [registerUser] = useRegisterMutation()
-  
+  const [registerUser] = useRegisterMutation();
+  const router = useRouter();
   return (
     <Layout bgColor="bg-mediumPrimary">
-      <div className="grid grid-cols-2 grid-flow-row">
+      <div className="grid grid-cols-2 grid-flow-row gap-x-4">
         <div className="flex flex-col justify-center content-center">
           <h1 className="text-center text-5xl font-bold font-display">Get Inspired.</h1>
           <h1 className="text-center text-6xl font-bold font-display">Join Eddium.</h1>
           <p className="text-center text-2xl mb-3">A place where your words matter.</p>
-          <p className="text-center">Already have an account? <a href="#" className="text-teal-400 font-semibold">Sign In</a></p>
+          <p className="text-center">Already have an account?
+            <Link href="/login">
+              <a className="text-teal-400 font-semibold">Sign In</a>
+            </Link></p>
         </div>
         <Formik
             initialValues={{ email: '', firstName: '', lastName: '', password: '', confirmedPassword: ''}}
@@ -45,6 +50,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
               if (data?.register.errors) {
                 toastNotification.error(data?.register.errors[0].message)
               } else if (data?.register.user) {
+                router.push('/')
                 toastNotification.success('🎉Congratuation to join on Eddium!')
               }
             }}>
@@ -57,7 +63,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
                   <TextInput type="password" placeholder="Confirmed Password" name="confirmedPassword" />
                   <div className="text-center">
                     {isSubmitting && <button type="submit" className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">Loading</button>}
-                    {!isSubmitting && <button type="submit" className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Sign Up</button>}
+                    {!isSubmitting && <button type="submit" className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Join</button>}
                   </div>
                 </Form>
               )}

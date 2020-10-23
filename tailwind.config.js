@@ -13,6 +13,12 @@ module.exports = {
         'accent-1': '#333',
         'mediumPrimary': '#e6f7ef'
       },
+      height: {
+        '90vh': '90vh' 
+      },
+      minHeight: {
+        '90vh': '90vh'
+      }
     }
   },
   variants: {},
