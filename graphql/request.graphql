@@ -1,7 +1,7 @@
 ####### Mutation #######
 mutation Register($firstName: String!, $lastName: String!, $email: String!, $password: String!, $confirmedPassword: String!) {
   register(email: $email, firstName: $firstName, lastName: $lastName, password: $password, confirmedPassword: $confirmedPassword) {
-    user { firstName, lastName, email }
+    user { id, firstName, lastName, email }
     errors { field, message }
   }
 }
@@ -10,13 +10,6 @@ mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
     user {
       ...RegularUser,
-      stories {
-        title
-        shortdesc
-        longdesc
-        view
-        clap
-      },
       savedStories {
         storyId
       }
@@ -27,6 +20,17 @@ mutation Login($email: String!, $password: String!) {
 
 mutation Logout {
   logout
+}
+
+mutation ForgotPassword($email: String!) {
+  forgotPassword(email: $email)
+}
+
+mutation ChangePassword($password: String!, $confirmedPassword: String, $token: String) {
+  changePassword(password: $password, confirmedPassword: $confirmedPassword, token: $token) {
+    user { ...RegularUser }
+    errors { field, message }
+  }
 }
 
 

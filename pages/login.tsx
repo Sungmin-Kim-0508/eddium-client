@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { MeDocument, MeQuery, useLoginMutation } from '../generated/graphql';
 import { toastNotification } from '../utils/toasters';
 import { useRouter } from 'next/router'
+import { LoadingBtn, SubmitBtn } from '../components/Buttons';
 
 type LoginProps = {
 }
@@ -32,15 +33,17 @@ const Login: React.FC<LoginProps> = ({}) => {
           <h1 className="text-center text-6xl font-bold font-display">Join Eddium.</h1>
           <p className="text-center text-xl mb-3">You don't have an account?</p>
           <Link href="/register">
-            <a className="text-teal-400 text-center font-semibold"> Join Eddium</a>
+            <a className="text-teal-400 text-center font-semibold mb-1"> Join Eddium</a>
+          </Link>
+          <Link href="/forgot-password">
+            <a className="text-blue-600 text-center font-semibold mb-2"> Forgot your password?</a>
           </Link>
         </div>
         <Formik
             initialValues={{ email: '', firstName: '', lastName: '', password: '', confirmedPassword: ''}}
             validationSchema={validationSchema}
             onSubmit={async (values) => {
-              // const { data, errors } = await loginUser({ variables: values })
-              const { data, errors } = await loginUser({
+              const { data } = await loginUser({
                 variables: values,
                 update: (cache, { data }) => {
                   cache.writeQuery<MeQuery>({
@@ -64,8 +67,8 @@ const Login: React.FC<LoginProps> = ({}) => {
                     <TextInput type="email" placeholder="Email Address" name="email" />
                     <TextInput type="password" placeholder="Password" name="password" />
                     <div className="text-center">
-                      {isSubmitting && <button type="submit" className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">Loading</button>}
-                      {!isSubmitting && <button type="submit" className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded min-w-full">Sign In</button>}
+                      {isSubmitting && <LoadingBtn>Loading...</LoadingBtn>}
+                      {!isSubmitting && <SubmitBtn>Sign In</SubmitBtn>}
                     </div>
                   </Form>
                 </div>

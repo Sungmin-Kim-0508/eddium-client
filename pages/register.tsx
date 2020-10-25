@@ -3,7 +3,7 @@ import Layout from '../components/Layout'
 import { TextInput } from "../components/FormFields"
 import { Formik, Form } from 'formik'
 import * as yup from "yup";
-import { useRegisterMutation } from '../generated/graphql';
+import { MeDocument, MeQuery, useRegisterMutation } from '../generated/graphql';
 import { toastNotification } from '../utils/toasters'
 import Link from 'next/link';
 import { useRouter } from 'next/router'
@@ -46,7 +46,18 @@ const Register: React.FC<RegisterProps> = ({}) => {
             initialValues={{ email: '', firstName: '', lastName: '', password: '', confirmedPassword: ''}}
             validationSchema={validationSchema}
             onSubmit={async (values) => {
-              const { data } = await registerUser({ variables: values })
+              const { data } = await registerUser({
+                variables: values,
+                update: (cache, { data }) => {
+                  cache.writeQuery<MeQuery>({
+                    query: MeDocument,
+                    data: {
+                      __typename: 'Query',
+                      me: data?.register?.user
+                    }
+                  })
+                }
+              })
               if (data?.register.errors) {
                 toastNotification.error(data?.register.errors[0].message)
               } else if (data?.register.user) {
