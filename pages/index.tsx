@@ -1,13 +1,18 @@
-import Nav from '../components/nav'
 import Layout from '../components/Layout'
+import { useGetAllStoriesForHomePageQuery } from '../generated/graphql'
+
 
 export default function IndexPage() {
+  const { data, loading, error } = useGetAllStoriesForHomePageQuery()
+
+  if (loading) return "Loading...";
+  if (error) return `Error! ${error.message}`;
   return (
     <div>
       <Layout>
-        <h1 className="text-5xl text-center text-accent-1">
-          Next.js + Tailwind CSS
-        </h1>
+        {data?.getAllStories.map(story => (
+          <div>{story.title}</div>
+        ))}
       </Layout>
     </div>
   )

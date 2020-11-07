@@ -31,6 +31,7 @@ const validationSchema = yup.object({
 const Register: React.FC<RegisterProps> = ({}) => {
   const [registerUser] = useRegisterMutation();
   const router = useRouter();
+  
   return (
     <Layout bgColor="bg-mediumPrimary">
       <div className="grid grid-cols-2 grid-flow-row gap-x-4">

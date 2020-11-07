@@ -15,11 +15,18 @@ export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
   me?: Maybe<User>;
+  getAllStories: Array<Story>;
+  getAllStoriesByUserId: Array<Story>;
 };
 
 
 export type QueryHelloArgs = {
   name: Scalars['String'];
+};
+
+
+export type QueryGetAllStoriesByUserIdArgs = {
+  userId: Scalars['String'];
 };
 
 /** This is User model */
@@ -39,8 +46,7 @@ export type Story = {
   __typename?: 'Story';
   id: Scalars['String'];
   title: Scalars['String'];
-  shortdesc: Scalars['String'];
-  longdesc: Scalars['String'];
+  content: Scalars['String'];
   view: Scalars['Float'];
   clap: Scalars['Float'];
   userId: Scalars['String'];
@@ -68,6 +74,7 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   forgotPassword: Scalars['Boolean'];
   changePassword: UserResponse;
+  createStory: Scalars['Boolean'];
 };
 
 
@@ -96,6 +103,12 @@ export type MutationChangePasswordArgs = {
   token?: Maybe<Scalars['String']>;
   password: Scalars['String'];
   confirmedPassword?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationCreateStoryArgs = {
+  content: Scalars['String'];
+  title: Scalars['String'];
 };
 
 export type UserResponse = {
@@ -203,7 +216,18 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'firstName' | 'lastName' | 'email'>
+    & RegularUserFragment
+  )> }
+);
+
+export type GetAllStoriesForHomePageQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllStoriesForHomePageQuery = (
+  { __typename?: 'Query' }
+  & { getAllStories: Array<(
+    { __typename?: 'Story' }
+    & Pick<Story, 'title' | 'content' | 'createdAt'>
   )> }
 );
 
@@ -409,13 +433,10 @@ export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePas
 export const MeDocument = gql`
     query Me {
   me {
-    id
-    firstName
-    lastName
-    email
+    ...RegularUser
   }
 }
-    `;
+    ${RegularUserFragmentDoc}`;
 
 /**
  * __useMeQuery__
@@ -441,3 +462,37 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const GetAllStoriesForHomePageDocument = gql`
+    query GetAllStoriesForHomePage {
+  getAllStories {
+    title
+    content
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetAllStoriesForHomePageQuery__
+ *
+ * To run a query within a React component, call `useGetAllStoriesForHomePageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllStoriesForHomePageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllStoriesForHomePageQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllStoriesForHomePageQuery(baseOptions?: Apollo.QueryHookOptions<GetAllStoriesForHomePageQuery, GetAllStoriesForHomePageQueryVariables>) {
+        return Apollo.useQuery<GetAllStoriesForHomePageQuery, GetAllStoriesForHomePageQueryVariables>(GetAllStoriesForHomePageDocument, baseOptions);
+      }
+export function useGetAllStoriesForHomePageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllStoriesForHomePageQuery, GetAllStoriesForHomePageQueryVariables>) {
+          return Apollo.useLazyQuery<GetAllStoriesForHomePageQuery, GetAllStoriesForHomePageQueryVariables>(GetAllStoriesForHomePageDocument, baseOptions);
+        }
+export type GetAllStoriesForHomePageQueryHookResult = ReturnType<typeof useGetAllStoriesForHomePageQuery>;
+export type GetAllStoriesForHomePageLazyQueryHookResult = ReturnType<typeof useGetAllStoriesForHomePageLazyQuery>;
+export type GetAllStoriesForHomePageQueryResult = Apollo.QueryResult<GetAllStoriesForHomePageQuery, GetAllStoriesForHomePageQueryVariables>;
