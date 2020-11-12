@@ -33,6 +33,18 @@ mutation ChangePassword($password: String!, $confirmedPassword: String, $token: 
   }
 }
 
+mutation CreateStory($title: String!, $content: String!, $isPublished: Boolean = false) {
+  createStory(title: $title, content: $content, isPublished: $isPublished)
+  {
+    id,
+    title,
+    content,
+    view,
+    clap,
+    createdAt
+  }
+}
+
 
 ####### Query #######
 query Me {
@@ -43,9 +55,20 @@ query Me {
 
 query GetAllStoriesForHomePage {
   getAllStories {
+    id,
     title,
     content,
     createdAt
+  }
+}
+
+query GetAllStoryListByMe($isPublished: Boolean = false) {
+  getAllStoriesByMe(isPublished: $isPublished) {
+    id,
+    title,
+    content,
+    createdAt,
+    updatedAt
   }
 }
 

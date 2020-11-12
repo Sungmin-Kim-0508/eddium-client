@@ -1,7 +1,7 @@
 import React from 'react'
 import { Formik, Form } from 'formik';
 import * as yup from "yup";
-import { TextInput } from '../components/FormFields';
+import { TextInput } from '../components/InputFields';
 import Layout from '../components/Layout';
 import Link from 'next/link';
 import { MeDocument, MeQuery, useLoginMutation } from '../generated/graphql';
@@ -31,9 +31,9 @@ const Login: React.FC<LoginProps> = ({}) => {
         <div className="flex flex-col justify-center content-center">
           <h1 className="text-center text-5xl font-bold font-display">Get Inspired.</h1>
           <h1 className="text-center text-6xl font-bold font-display">Join Eddium.</h1>
-          <p className="text-center text-xl mb-3">You don't have an account?</p>
+          <p className="text-center mb-3">You don't have an account?</p>
           <Link href="/register">
-            <a className="text-teal-400 text-center font-semibold mb-1"> Join Eddium</a>
+            <a className="text-teal-400 text-center font-semibold text-xl mb-1"> Join Eddium</a>
           </Link>
           <Link href="/forgot-password">
             <a className="text-blue-600 text-center font-semibold mb-2"> Forgot your password?</a>

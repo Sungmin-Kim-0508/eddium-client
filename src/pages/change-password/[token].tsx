@@ -3,7 +3,7 @@ import Layout from '../../components/Layout';
 import { useRouter } from 'next/router'
 import { Form, Formik } from 'formik';
 import { LoadingBtn, SubmitBtn } from '../../components/Buttons';
-import { TextInput } from '../../components/FormFields';
+import { TextInput } from '../../components/InputFields';
 import { MeDocument, MeQuery, useChangePasswordMutation } from '../../generated/graphql';
 import Link from 'next/link';
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Layout from '../components/Layout';
 import { Formik, Form } from 'formik'
-import { TextInput } from '../components/FormFields';
+import { TextInput } from '../components/InputFields';
 import { LoadingBtn, SubmitBtn } from '../components/Buttons';
 import { useForgotPasswordMutation } from '../generated/graphql';
 

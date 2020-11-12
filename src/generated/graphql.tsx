@@ -17,7 +17,6 @@ export type Query = {
   me?: Maybe<User>;
   getAllStories: Array<Story>;
   getAllStoriesByUserId: Array<Story>;
-  getAllStoriesByMe: Array<Story>;
   getStoryBy: Story;
 };
 
@@ -28,13 +27,7 @@ export type QueryHelloArgs = {
 
 
 export type QueryGetAllStoriesByUserIdArgs = {
-  isPublished?: Maybe<Scalars['Boolean']>;
   userId: Scalars['String'];
-};
-
-
-export type QueryGetAllStoriesByMeArgs = {
-  isPublished?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -259,19 +252,6 @@ export type GetAllStoriesForHomePageQuery = (
   & { getAllStories: Array<(
     { __typename?: 'Story' }
     & Pick<Story, 'id' | 'title' | 'content' | 'createdAt'>
-  )> }
-);
-
-export type GetAllStoryListByMeQueryVariables = Exact<{
-  isPublished?: Maybe<Scalars['Boolean']>;
-}>;
-
-
-export type GetAllStoryListByMeQuery = (
-  { __typename?: 'Query' }
-  & { getAllStoriesByMe: Array<(
-    { __typename?: 'Story' }
-    & Pick<Story, 'id' | 'title' | 'content' | 'createdAt' | 'updatedAt'>
   )> }
 );
 
@@ -580,40 +560,3 @@ export function useGetAllStoriesForHomePageLazyQuery(baseOptions?: Apollo.LazyQu
 export type GetAllStoriesForHomePageQueryHookResult = ReturnType<typeof useGetAllStoriesForHomePageQuery>;
 export type GetAllStoriesForHomePageLazyQueryHookResult = ReturnType<typeof useGetAllStoriesForHomePageLazyQuery>;
 export type GetAllStoriesForHomePageQueryResult = Apollo.QueryResult<GetAllStoriesForHomePageQuery, GetAllStoriesForHomePageQueryVariables>;
-export const GetAllStoryListByMeDocument = gql`
-    query GetAllStoryListByMe($isPublished: Boolean = false) {
-  getAllStoriesByMe(isPublished: $isPublished) {
-    id
-    title
-    content
-    createdAt
-    updatedAt
-  }
-}
-    `;
-
-/**
- * __useGetAllStoryListByMeQuery__
- *
- * To run a query within a React component, call `useGetAllStoryListByMeQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllStoryListByMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllStoryListByMeQuery({
- *   variables: {
- *      isPublished: // value for 'isPublished'
- *   },
- * });
- */
-export function useGetAllStoryListByMeQuery(baseOptions?: Apollo.QueryHookOptions<GetAllStoryListByMeQuery, GetAllStoryListByMeQueryVariables>) {
-        return Apollo.useQuery<GetAllStoryListByMeQuery, GetAllStoryListByMeQueryVariables>(GetAllStoryListByMeDocument, baseOptions);
-      }
-export function useGetAllStoryListByMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllStoryListByMeQuery, GetAllStoryListByMeQueryVariables>) {
-          return Apollo.useLazyQuery<GetAllStoryListByMeQuery, GetAllStoryListByMeQueryVariables>(GetAllStoryListByMeDocument, baseOptions);
-        }
-export type GetAllStoryListByMeQueryHookResult = ReturnType<typeof useGetAllStoryListByMeQuery>;
-export type GetAllStoryListByMeLazyQueryHookResult = ReturnType<typeof useGetAllStoryListByMeLazyQuery>;
-export type GetAllStoryListByMeQueryResult = Apollo.QueryResult<GetAllStoryListByMeQuery, GetAllStoryListByMeQueryVariables>;

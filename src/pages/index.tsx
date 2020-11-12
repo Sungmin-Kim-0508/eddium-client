@@ -11,7 +11,7 @@ export default function IndexPage() {
     <div>
       <Layout>
         {data?.getAllStories.map(story => (
-          <div>{story.title}</div>
+          <div key={story.id}>{story.title}</div>
         ))}
       </Layout>
     </div>

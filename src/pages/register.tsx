@@ -1,6 +1,6 @@
 import React from 'react'
 import Layout from '../components/Layout'
-import { TextInput } from "../components/FormFields"
+import { TextInput } from "../components/InputFields"
 import { Formik, Form } from 'formik'
 import * as yup from "yup";
 import { MeDocument, MeQuery, useRegisterMutation } from '../generated/graphql';
@@ -31,6 +31,7 @@ const validationSchema = yup.object({
 const Register: React.FC<RegisterProps> = ({}) => {
   const [registerUser] = useRegisterMutation();
   const router = useRouter();
+  useIsAuth()
   
   return (
     <Layout bgColor="bg-mediumPrimary">
