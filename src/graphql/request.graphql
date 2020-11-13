@@ -45,6 +45,18 @@ mutation CreateStory($title: String!, $content: String!, $isPublished: Boolean =
   }
 }
 
+mutation UpdateStory($id: String!, $title: String!, $content: String!, $isPublished: Boolean = false) {
+  updateStory(id: $id, title: $title, content: $content, isPublished: $isPublished)
+  {
+    id,
+    title,
+    content,
+    view,
+    clap,
+    createdAt
+  }
+}
+
 
 ####### Query #######
 query Me {

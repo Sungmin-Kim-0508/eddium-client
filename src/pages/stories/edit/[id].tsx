@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { useIsAuth } from '../utils/useIsAuth';
-import Layout from "../components/Layout"
+import { useIsAuth } from '../../../utils/useIsAuth';
+import Layout from "../../../components/Layout"
 import styled from 'styled-components'
-import { useCreateStoryMutation } from '../generated/graphql';
 import { useRouter } from 'next/router'
 import { debounce } from "throttle-debounce"
+import { useUpdateStoryMutation } from '../../../../generated/graphql';
 
 const TextArea = styled.textarea`
   ::placeholder {
@@ -12,16 +12,18 @@ const TextArea = styled.textarea`
   }
 `
 
-type CreateStory = {
+type EditStory = {
 
 }
 
-const CreateStory: React.FC<CreateStory> = ({}) => {
+const EditStory: React.FC<EditStory> = ({}) => {
+  useIsAuth()
+
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [createStory, { loading, data }] = useCreateStoryMutation()
+  const [updateStory, { loading, data }] = useUpdateStoryMutation()
   const router = useRouter()
-  useIsAuth()
+  const { id } = router.query
 
   useEffect(() => {
     return () => {
@@ -31,8 +33,8 @@ const CreateStory: React.FC<CreateStory> = ({}) => {
   }, [])
 
   const saveTempStory = debounce(5000, ({ title = '', content = '' } : { title?: string, content?: string }) => {
-    createStory({
-      variables: {title: title!, content: content!, isPublished: false },
+    updateStory({
+      variables: {id: id as string, title: title!, content: content!, isPublished: false },
       update: (cache) => {
         cache.evict({})
       }
@@ -42,8 +44,8 @@ const CreateStory: React.FC<CreateStory> = ({}) => {
   const handlePublish = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (title || content) {
-      createStory({
-        variables: {title, content, isPublished: true },
+      updateStory({
+        variables: {id: id as string, title, content, isPublished: true },
         update: (cache) => {
           cache.evict({})
         }
@@ -83,4 +85,4 @@ const CreateStory: React.FC<CreateStory> = ({}) => {
   );
 }
 
-export default CreateStory
+export default EditStory
