@@ -300,6 +300,19 @@ export type GetAllStoryListByMeQuery = (
   )> }
 );
 
+export type GetStoryByStoryIdQueryVariables = Exact<{
+  id?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetStoryByStoryIdQuery = (
+  { __typename?: 'Query' }
+  & { getStoryBy: (
+    { __typename?: 'Story' }
+    & Pick<Story, 'id' | 'title' | 'content'>
+  ) }
+);
+
 export type RegularUserFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'firstName' | 'lastName' | 'email'>
@@ -682,3 +695,38 @@ export function useGetAllStoryListByMeLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetAllStoryListByMeQueryHookResult = ReturnType<typeof useGetAllStoryListByMeQuery>;
 export type GetAllStoryListByMeLazyQueryHookResult = ReturnType<typeof useGetAllStoryListByMeLazyQuery>;
 export type GetAllStoryListByMeQueryResult = Apollo.QueryResult<GetAllStoryListByMeQuery, GetAllStoryListByMeQueryVariables>;
+export const GetStoryByStoryIdDocument = gql`
+    query GetStoryByStoryId($id: String) {
+  getStoryBy(id: $id) {
+    id
+    title
+    content
+  }
+}
+    `;
+
+/**
+ * __useGetStoryByStoryIdQuery__
+ *
+ * To run a query within a React component, call `useGetStoryByStoryIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetStoryByStoryIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetStoryByStoryIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetStoryByStoryIdQuery(baseOptions?: Apollo.QueryHookOptions<GetStoryByStoryIdQuery, GetStoryByStoryIdQueryVariables>) {
+        return Apollo.useQuery<GetStoryByStoryIdQuery, GetStoryByStoryIdQueryVariables>(GetStoryByStoryIdDocument, baseOptions);
+      }
+export function useGetStoryByStoryIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetStoryByStoryIdQuery, GetStoryByStoryIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetStoryByStoryIdQuery, GetStoryByStoryIdQueryVariables>(GetStoryByStoryIdDocument, baseOptions);
+        }
+export type GetStoryByStoryIdQueryHookResult = ReturnType<typeof useGetStoryByStoryIdQuery>;
+export type GetStoryByStoryIdLazyQueryHookResult = ReturnType<typeof useGetStoryByStoryIdLazyQuery>;
+export type GetStoryByStoryIdQueryResult = Apollo.QueryResult<GetStoryByStoryIdQuery, GetStoryByStoryIdQueryVariables>;

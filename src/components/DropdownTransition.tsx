@@ -8,8 +8,8 @@ type DropdownTransitionProps = {
   BtnFigure: () => React.ReactElement
 }
 
-export const Anchor: React.FC<{ href: string }> = ({ children, href }) => (
-  <Link href={href}>
+export const Anchor: React.FC<{ href: string, as?: string }> = ({ children, href, as }) => (
+  <Link href={href} as={as}>
     <a className="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
       {children}
     </a>

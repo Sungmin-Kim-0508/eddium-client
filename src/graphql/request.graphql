@@ -84,10 +84,24 @@ query GetAllStoryListByMe($isPublished: Boolean = false) {
   }
 }
 
+query GetStoryByStoryId($id: String) {
+  getStoryBy(id: $id) {
+    id,
+    title,
+    content
+  }
+}
+
 ####### Fragment
 fragment RegularUser on User {
   id,
   firstName,
   lastName,
   email
+}
+
+####### Type
+type FindStoryBy {
+  id: String,
+  title: String
 }

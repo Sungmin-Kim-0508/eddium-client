@@ -8,7 +8,7 @@ import dayjs from 'dayjs'
 import relativeTime from "dayjs/plugin/relativeTime"
 import { Down } from '../../icons/icons'
 import DropdownTransition, { Anchor } from "../../components/DropdownTransition"
-import { useOpenNav } from '../../utils/useOpenNav'
+import Link from 'next/link'
 
 dayjs.extend(relativeTime)
 
@@ -29,7 +29,9 @@ const Drafts: React.FC<DraftsProps> = ({}) => {
         {storyLoading && <div>Loading...</div>}
         {!storyLoading && storyList?.getAllStoriesByMe.map(story => (
           <div key={story.id} className="py-4 border-b-2">
-            <span>{story.title}</span>
+            <Link href="/stories/[id]" as={`/stories/${story.id}`}>
+              <a>{story.title}</a>
+            </Link>
             <p>{story.content}</p>
             <div className="flex">
               <span className="mr-3">
@@ -37,9 +39,7 @@ const Drafts: React.FC<DraftsProps> = ({}) => {
               </span>
               <div className="relative">
                 <DropdownTransition BtnFigure={() => <Down />}>
-                  <Anchor href="/create-story">New Story</Anchor>
-                  <Anchor href="/create-story">New Story</Anchor>
-                  <Anchor href="/create-story">New Story</Anchor>
+                  <Anchor href="/stories/edit/[id]" as={`/stories/edit/${story.id}`}>Edit Story</Anchor>
                 </DropdownTransition>
               </div>
             </div>
