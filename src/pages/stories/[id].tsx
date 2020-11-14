@@ -1,15 +1,14 @@
 import React from 'react'
+import Layout from '../../components/Layout'
 
-type StoryDetailProps = {
-
-}
+type StoryDetailProps = {}
 
 const StoryDetail: React.FC<StoryDetailProps> = ({}) => {
   return (
-    <div>
+    <Layout>
       <p>Story Detail</p>
-    </div>
-  );
+    </Layout>
+  )
 }
 
 export default StoryDetail

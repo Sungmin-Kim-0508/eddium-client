@@ -4,7 +4,6 @@ import Layout from '../components/Layout'
 import styled from 'styled-components'
 import { useCreateStoryMutation } from '../generated/graphql'
 import { useRouter } from 'next/router'
-import { debounce } from 'throttle-debounce'
 
 const TextArea = styled.textarea`
   ::placeholder {
@@ -24,7 +23,7 @@ const CreateStory: React.FC<CreateStory> = ({}) => {
   const router = useRouter()
   useIsAuth()
 
-  const saveTempStory = debounce(5000, ({ title = '', content = '' }: { title?: string; content?: string }) => {
+  const handleSave = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     createStory({
       variables: { title: title!, content: content!, isPublished: false },
       update: (cache) => {
@@ -34,7 +33,7 @@ const CreateStory: React.FC<CreateStory> = ({}) => {
       const storyId = res.data?.createStory.id
       router.replace('/stories/edit/' + storyId)
     })
-  })
+  }
 
   const handlePublish = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -55,9 +54,6 @@ const CreateStory: React.FC<CreateStory> = ({}) => {
       ...inputs,
       [name]: value,
     })
-    if (title.length === 5) {
-      saveTempStory({ title })
-    }
   }
 
   const handleContentTempStory = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -66,15 +62,15 @@ const CreateStory: React.FC<CreateStory> = ({}) => {
       ...inputs,
       [name]: value,
     })
-    if (content.length === 5) {
-      saveTempStory({ content })
-    }
   }
 
   return (
     <Layout>
       <form className='px-56' onSubmit={handlePublish}>
         <div className='flex mb-4'>
+            <button type='button' className='bg-gray-600 hover:bg-gray-700 text-white text-sm px-2 py-1 rounded block mr-3' onClick={handleSave}>
+              Save
+            </button>
           <button type='submit' className='bg-green-600 hover:bg-green-700 text-white text-sm px-2 py-1 rounded block mr-3'>
             Publish
           </button>

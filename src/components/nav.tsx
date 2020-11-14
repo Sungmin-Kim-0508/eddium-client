@@ -5,7 +5,6 @@ import { useLogoutMutation, useMeQuery } from "../generated/graphql"
 import { toastNotification } from "../utils/toasters"
 import { useRouter } from 'next/router'
 import { Bell, Bookmarked, Magnifier, ToggleNavForMobile } from "../icons/icons"
-import { useOpenNav } from "../utils/useOpenNav"
 import DropdownTransition, { Anchor } from "../components/DropdownTransition"
 
 const IconButton: React.FC = ({ children }) => (
@@ -39,8 +38,6 @@ const ButtonFigure = () => (
 )
 
 export default function Nav() {
-  const {isOpen, openNav} = useOpenNav()
-
   const apolloClient = useApolloClient();
 
   const [logout, { loading: logoutLoading }] = useLogoutMutation()
