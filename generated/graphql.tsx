@@ -13,17 +13,12 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  hello: Scalars['String'];
   me?: Maybe<User>;
+  findBy?: Maybe<User>;
   getAllStories: Array<Story>;
   getAllStoriesByUserId: Array<Story>;
   getAllStoriesByMe: Array<Story>;
   getStoryBy: Story;
-};
-
-
-export type QueryHelloArgs = {
-  name: Scalars['String'];
 };
 
 
@@ -65,6 +60,7 @@ export type Story = {
   clap: Scalars['Float'];
   userId: Scalars['String'];
   isPublished: Scalars['Boolean'];
+  user?: Maybe<User>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -309,7 +305,11 @@ export type GetStoryByStoryIdQuery = (
   { __typename?: 'Query' }
   & { getStoryBy: (
     { __typename?: 'Story' }
-    & Pick<Story, 'id' | 'title' | 'content'>
+    & Pick<Story, 'id' | 'title' | 'content' | 'view' | 'clap' | 'createdAt'>
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'firstName' | 'lastName'>
+    )> }
   ) }
 );
 
@@ -701,6 +701,13 @@ export const GetStoryByStoryIdDocument = gql`
     id
     title
     content
+    view
+    clap
+    createdAt
+    user {
+      firstName
+      lastName
+    }
   }
 }
     `;

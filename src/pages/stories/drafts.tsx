@@ -33,7 +33,7 @@ const Drafts: React.FC<DraftsProps> = ({}) => {
               </Link>
               <p>{story.content}</p>
               <div className='flex'>
-                <span className='mr-3'>Created At {dayjs(story.createdAt).fromNow()}</span>
+                <span className='mr-3'>Created At {dayjs(parseInt(story.createdAt)).fromNow()}</span>
                 <div className='relative'>
                   <DropdownTransition BtnFigure={() => <Down />}>
                     <Anchor href='/stories/edit/[id]' as={`/stories/edit/${story.id}`}>

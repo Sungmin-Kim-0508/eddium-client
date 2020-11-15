@@ -88,7 +88,14 @@ query GetStoryByStoryId($id: String) {
   getStoryBy(id: $id) {
     id,
     title,
-    content
+    content,
+    view,
+    clap,
+    createdAt,
+    user {
+      firstName,
+      lastName
+    }
   }
 }
 
