@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { useIsAuth } from '../utils/useIsAuth'
+import { useIsAuth } from '../hooks/useIsAuth'
 import Layout from '../components/Layout'
 import styled from 'styled-components'
 import { useCreateStoryMutation } from '../generated/graphql'
 import { useRouter } from 'next/router'
+import { toastNotification } from '../utils/toasters'
 
 const TextArea = styled.textarea`
   ::placeholder {
@@ -37,7 +38,9 @@ const CreateStory: React.FC<CreateStory> = ({}) => {
 
   const handlePublish = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (title || content) {
+    if (!title) toastNotification.error('Title Please 😉')
+    else if (!content) toastNotification.error('Your Story Please 😉')
+    else {
       createStory({
         variables: { title, content, isPublished: true },
         update: (cache) => {

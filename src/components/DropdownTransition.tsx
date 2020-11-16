@@ -1,7 +1,7 @@
 import React from 'react'
 import { Transition } from '@headlessui/react';
 import Link from 'next/link'
-import { useOpenNav } from '../utils/useOpenNav';
+import { useOpenNav } from '../hooks/useOpenNav';
 
 type DropdownTransitionProps = {
   btnClassName?: string

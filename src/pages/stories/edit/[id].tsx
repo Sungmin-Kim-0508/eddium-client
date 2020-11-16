@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useIsAuth } from '../../../utils/useIsAuth'
+import { useIsAuth } from '../../../hooks/useIsAuth'
 import Layout from '../../../components/Layout'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'

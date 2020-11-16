@@ -57,6 +57,13 @@ mutation UpdateStory($id: String!, $title: String!, $content: String!, $isPublis
   }
 }
 
+mutation DeleteStory($id: String!) {
+  deleteStory(id: $id) {
+    isDelete,
+    msg
+  }
+}
+
 
 ####### Query #######
 query Me {

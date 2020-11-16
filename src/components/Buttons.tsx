@@ -11,3 +11,10 @@ export const LoadingBtn: React.FC = ({ children }) => (
     {children}
   </button>
 )
+
+const Button: React.FC<{ color: 'red' | 'gray', onClick?: () => any }> = ({ children, color, onClick }) => (
+  <button className={`bg-${color}-600 hover:bg-${color}-700 text-white font-bold py-2 px-4 rounded`} onClick={onClick}>
+    {children}
+  </button>
+)
+export default Button

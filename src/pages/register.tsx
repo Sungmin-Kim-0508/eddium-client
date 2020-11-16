@@ -7,7 +7,7 @@ import { MeDocument, MeQuery, useRegisterMutation } from '../generated/graphql';
 import { toastNotification } from '../utils/toasters'
 import Link from 'next/link';
 import { useRouter } from 'next/router'
-import { useIsAuth } from '../utils/useIsAuth';
+import { useIsAuth } from '../hooks/useIsAuth';
 
 type RegisterProps = {
 }

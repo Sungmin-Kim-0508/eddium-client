@@ -14,7 +14,8 @@ module.exports = {
       colors: {
         'accent-1': '#333',
         'mediumPrimary': '#e6f7ef',
-        'mediumContent': '#292929'
+        'mediumContent': '#292929',
+        'mediumGray': '#757575'
       },
       height: {
         '90vh': '90vh' 

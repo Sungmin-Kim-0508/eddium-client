@@ -1,13 +1,11 @@
 import React from 'react'
 import Layout from '../../components/Layout'
-import { useIsAuth } from '../../utils/useIsAuth'
+import { useIsAuth } from '../../hooks/useIsAuth'
 import { useRouter } from 'next/router'
 import { Helmet } from 'react-helmet-async'
 import { useGetStoryByStoryIdQuery } from '../../../generated/graphql'
 import { Bookmarked, Clap, FacebookSmall, TwitterSmall } from '../../icons/icons'
 import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
 
 type StoryDetailProps = {}
 
