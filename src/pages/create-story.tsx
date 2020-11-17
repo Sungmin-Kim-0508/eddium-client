@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useIsAuth } from '../hooks/useIsAuth'
 import Layout from '../components/Layout'
 import styled from 'styled-components'
-import { useCreateStoryMutation } from '../generated/graphql'
 import { useRouter } from 'next/router'
 import { toastNotification } from '../utils/toasters'
+import useHandleInputStoryChange from '../hooks/useHandleInputStoryChange'
 
 const TextArea = styled.textarea`
   ::placeholder {
@@ -15,56 +15,32 @@ const TextArea = styled.textarea`
 type CreateStory = {}
 
 const CreateStory: React.FC<CreateStory> = ({}) => {
-  const [inputs, setInputs] = useState({
-    title: '',
-    content: '',
-  })
-  const { title, content } = inputs
-  const [createStory, { loading, data }] = useCreateStoryMutation()
-  const router = useRouter()
   useIsAuth()
 
-  const handleSave = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    createStory({
-      variables: { title: title!, content: content!, isPublished: false },
-      update: (cache) => {
-        cache.evict({})
-      },
-    }).then((res) => {
-      const storyId = res.data?.createStory.id
-      router.replace('/stories/edit/' + storyId)
-    })
+  const { inputs, handleInputChange, handleCreateStory, createStoryResponse } = useHandleInputStoryChange({ id: null })
+  const { title, content } = inputs
+  const { loading, data } = createStoryResponse
+  const router = useRouter()
+
+  const handleSave = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
+    if (!title || content.length < 30) {
+      toastNotification.error('Please enter title and story please 😉')
+      return;
+    }
+    await handleCreateStory(false)
   }
 
-  const handlePublish = (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePublish = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!title) toastNotification.error('Title Please 😉')
-    else if (!content) toastNotification.error('Your Story Please 😉')
+    if (!title || content.length < 30) {
+      toastNotification.error('Please enter title and story please 😉')
+      return;
+    }
     else {
-      createStory({
-        variables: { title, content, isPublished: true },
-        update: (cache) => {
-          cache.evict({})
-        },
-      })
+      await handleCreateStory(true)
       router.push('/stories/drafts')
     }
-  }
-
-  const handleTitleTempStory = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.currentTarget
-    setInputs({
-      ...inputs,
-      [name]: value,
-    })
-  }
-
-  const handleContentTempStory = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { name, value } = e.currentTarget
-    setInputs({
-      ...inputs,
-      [name]: value,
-    })
   }
 
   return (
@@ -80,8 +56,8 @@ const CreateStory: React.FC<CreateStory> = ({}) => {
           {loading && <span>Loading..</span>}
           {!loading && data && <span>Saved</span>}
         </div>
-        <input type='text' name='title' className='pl-4 h-16 w-1/2 text-3xl border-l border-gray-600 focus:outline-none placeholder-gray-500' placeholder='Title' value={title} onChange={handleTitleTempStory} />
-        <TextArea value={content} name='content' className='p-2 text-2xl focus:outline-none' onChange={handleContentTempStory} placeholder='Tell your story...' rows={40} cols={64} />
+        <input type='text' name='title' className='pl-4 h-16 w-1/2 text-3xl border-l border-gray-600 focus:outline-none placeholder-gray-500' placeholder='Title' value={title} onChange={handleInputChange} />
+        <TextArea value={content} name='content' className='p-2 text-2xl focus:outline-none' onChange={handleInputChange} placeholder='Tell your story...' rows={40} cols={64} />
       </form>
     </Layout>
   )

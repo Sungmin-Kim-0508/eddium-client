@@ -28,7 +28,8 @@ const Drafts: React.FC<DraftsProps> = ({}) => {
     <Layout>
       <StoryListLayout>
         {storyLoading && <div>Loading...</div>}
-        {!storyLoading &&
+        {!storyLoading && storyList?.getAllStoriesByMe.length! === 0 && <div>No drafted stories</div>}
+        {!storyLoading && storyList?.getAllStoriesByMe.length! > 0 &&
           storyList?.getAllStoriesByMe.map((story) => (
             <div key={story.id} className='py-4 border-b-2'>
               <a>{story.title}</a>
