@@ -1,16 +1,18 @@
 import '../styles/index.css'
-import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client'
+import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink, ApolloLink } from '@apollo/client'
+import { createUploadLink } from 'apollo-upload-client'
 import { HelmetProvider } from 'react-helmet-async'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+const uploadLink = createUploadLink({
+  uri: 'http://localhost:4000/graphql',
+  credentials: 'include'
+})
+
 const client = new ApolloClient({
   // ssrMode: true,
-  link: createHttpLink({
-    uri: 'http://localhost:4000/graphql',
-    credentials: 'include',
-    // headers:
-  }),
+  link: (uploadLink as unknown) as ApolloLink,
   cache: new InMemoryCache(),
 })
 

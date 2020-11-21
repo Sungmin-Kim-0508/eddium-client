@@ -33,27 +33,18 @@ mutation ChangePassword($password: String!, $confirmedPassword: String, $token: 
   }
 }
 
-mutation CreateStory($title: String!, $content: String!, $isPublished: Boolean = false) {
-  createStory(title: $title, content: $content, isPublished: $isPublished)
+mutation CreateStory($title: String!, $content: String!, $imgUrl: String $isPublished: Boolean = false) {
+  createStory(title: $title, content: $content, imgUrl: $imgUrl, isPublished: $isPublished)
   {
-    id,
-    title,
-    content,
-    view,
-    clap,
-    createdAt
+    ...RegularStory
+
   }
 }
 
-mutation UpdateStory($id: String!, $title: String!, $content: String!, $isPublished: Boolean = false) {
-  updateStory(id: $id, title: $title, content: $content, isPublished: $isPublished)
+mutation UpdateStory($id: String!, $title: String!, $content: String!, $imgUrl: String, $isPublished: Boolean = false) {
+  updateStory(id: $id, title: $title, content: $content, imgUrl: $imgUrl, isPublished: $isPublished)
   {
-    id,
-    title,
-    content,
-    view,
-    clap,
-    createdAt
+    ...RegularStory
   }
 }
 
@@ -61,6 +52,14 @@ mutation DeleteStory($id: String!) {
   deleteStory(id: $id) {
     isDelete,
     msg
+  }
+}
+
+mutation CreateThumnail($image: Upload!) {
+  createThumnail(image: $image) {
+    success,
+    message,
+    url
   }
 }
 
@@ -77,28 +76,20 @@ query GetAllStoriesForHomePage {
     id,
     title,
     content,
+    thumbnail_image_url,
     createdAt
   }
 }
 
 query GetAllStoryListByMe($isPublished: Boolean = false) {
   getAllStoriesByMe(isPublished: $isPublished) {
-    id,
-    title,
-    content,
-    createdAt,
-    updatedAt
+    ...RegularStory
   }
 }
 
 query GetStoryByStoryId($id: String) {
   getStoryBy(id: $id) {
-    id,
-    title,
-    content,
-    view,
-    clap,
-    createdAt,
+    ...RegularStory
     user {
       firstName,
       lastName
@@ -112,6 +103,17 @@ fragment RegularUser on User {
   firstName,
   lastName,
   email
+}
+
+fragment RegularStory on Story {
+  id,
+  title,
+  content,
+  view,
+  clap,
+  thumbnail_image_url,
+  createdAt,
+  updatedAt
 }
 
 ####### Type

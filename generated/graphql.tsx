@@ -9,6 +9,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type Query = {
@@ -60,6 +62,7 @@ export type Story = {
   clap: Scalars['Float'];
   userId: Scalars['String'];
   isPublished: Scalars['Boolean'];
+  thumbnail_image_url: Scalars['String'];
   user?: Maybe<User>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
@@ -88,6 +91,7 @@ export type Mutation = {
   createStory: Story;
   updateStory?: Maybe<Story>;
   deleteStory: DeleteResponse;
+  createThumnail: UploadedFileResponse;
 };
 
 
@@ -121,6 +125,7 @@ export type MutationChangePasswordArgs = {
 
 export type MutationCreateStoryArgs = {
   isPublished: Scalars['Boolean'];
+  imgUrl?: Maybe<Scalars['String']>;
   content: Scalars['String'];
   title: Scalars['String'];
 };
@@ -128,6 +133,7 @@ export type MutationCreateStoryArgs = {
 
 export type MutationUpdateStoryArgs = {
   isPublished: Scalars['Boolean'];
+  imgUrl?: Maybe<Scalars['String']>;
   content: Scalars['String'];
   title: Scalars['String'];
   id: Scalars['String'];
@@ -136,6 +142,11 @@ export type MutationUpdateStoryArgs = {
 
 export type MutationDeleteStoryArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationCreateThumnailArgs = {
+  image: Scalars['Upload'];
 };
 
 export type UserResponse = {
@@ -155,6 +166,17 @@ export type DeleteResponse = {
   isDelete: Scalars['Boolean'];
   msg: Scalars['String'];
 };
+
+export type UploadedFileResponse = {
+  __typename?: 'UploadedFileResponse';
+  success: Scalars['Boolean'];
+  message: Scalars['String'];
+  filename: Scalars['String'];
+  mimetype: Scalars['String'];
+  encoding: Scalars['String'];
+  url: Scalars['String'];
+};
+
 
 export type RegisterMutationVariables = Exact<{
   firstName: Scalars['String'];
@@ -245,6 +267,7 @@ export type ChangePasswordMutation = (
 export type CreateStoryMutationVariables = Exact<{
   title: Scalars['String'];
   content: Scalars['String'];
+  imgUrl?: Maybe<Scalars['String']>;
   isPublished?: Maybe<Scalars['Boolean']>;
 }>;
 
@@ -253,7 +276,7 @@ export type CreateStoryMutation = (
   { __typename?: 'Mutation' }
   & { createStory: (
     { __typename?: 'Story' }
-    & Pick<Story, 'id' | 'title' | 'content' | 'view' | 'clap' | 'createdAt'>
+    & RegularStoryFragment
   ) }
 );
 
@@ -261,6 +284,7 @@ export type UpdateStoryMutationVariables = Exact<{
   id: Scalars['String'];
   title: Scalars['String'];
   content: Scalars['String'];
+  imgUrl?: Maybe<Scalars['String']>;
   isPublished?: Maybe<Scalars['Boolean']>;
 }>;
 
@@ -269,7 +293,7 @@ export type UpdateStoryMutation = (
   { __typename?: 'Mutation' }
   & { updateStory?: Maybe<(
     { __typename?: 'Story' }
-    & Pick<Story, 'id' | 'title' | 'content' | 'view' | 'clap' | 'createdAt'>
+    & RegularStoryFragment
   )> }
 );
 
@@ -283,6 +307,19 @@ export type DeleteStoryMutation = (
   & { deleteStory: (
     { __typename?: 'DeleteResponse' }
     & Pick<DeleteResponse, 'isDelete' | 'msg'>
+  ) }
+);
+
+export type CreateThumnailMutationVariables = Exact<{
+  image: Scalars['Upload'];
+}>;
+
+
+export type CreateThumnailMutation = (
+  { __typename?: 'Mutation' }
+  & { createThumnail: (
+    { __typename?: 'UploadedFileResponse' }
+    & Pick<UploadedFileResponse, 'success' | 'message' | 'url'>
   ) }
 );
 
@@ -304,7 +341,7 @@ export type GetAllStoriesForHomePageQuery = (
   { __typename?: 'Query' }
   & { getAllStories: Array<(
     { __typename?: 'Story' }
-    & Pick<Story, 'id' | 'title' | 'content' | 'createdAt'>
+    & Pick<Story, 'id' | 'title' | 'content' | 'thumbnail_image_url' | 'createdAt'>
   )> }
 );
 
@@ -317,7 +354,7 @@ export type GetAllStoryListByMeQuery = (
   { __typename?: 'Query' }
   & { getAllStoriesByMe: Array<(
     { __typename?: 'Story' }
-    & Pick<Story, 'id' | 'title' | 'content' | 'createdAt' | 'updatedAt'>
+    & RegularStoryFragment
   )> }
 );
 
@@ -330,11 +367,11 @@ export type GetStoryByStoryIdQuery = (
   { __typename?: 'Query' }
   & { getStoryBy: (
     { __typename?: 'Story' }
-    & Pick<Story, 'id' | 'title' | 'content' | 'view' | 'clap' | 'createdAt'>
     & { user?: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'firstName' | 'lastName'>
     )> }
+    & RegularStoryFragment
   ) }
 );
 
@@ -343,12 +380,29 @@ export type RegularUserFragment = (
   & Pick<User, 'id' | 'firstName' | 'lastName' | 'email'>
 );
 
+export type RegularStoryFragment = (
+  { __typename?: 'Story' }
+  & Pick<Story, 'id' | 'title' | 'content' | 'view' | 'clap' | 'thumbnail_image_url' | 'createdAt' | 'updatedAt'>
+);
+
 export const RegularUserFragmentDoc = gql`
     fragment RegularUser on User {
   id
   firstName
   lastName
   email
+}
+    `;
+export const RegularStoryFragmentDoc = gql`
+    fragment RegularStory on Story {
+  id
+  title
+  content
+  view
+  clap
+  thumbnail_image_url
+  createdAt
+  updatedAt
 }
     `;
 export const RegisterDocument = gql`
@@ -538,17 +592,12 @@ export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswo
 export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
 export const CreateStoryDocument = gql`
-    mutation CreateStory($title: String!, $content: String!, $isPublished: Boolean = false) {
-  createStory(title: $title, content: $content, isPublished: $isPublished) {
-    id
-    title
-    content
-    view
-    clap
-    createdAt
+    mutation CreateStory($title: String!, $content: String!, $imgUrl: String, $isPublished: Boolean = false) {
+  createStory(title: $title, content: $content, imgUrl: $imgUrl, isPublished: $isPublished) {
+    ...RegularStory
   }
 }
-    `;
+    ${RegularStoryFragmentDoc}`;
 export type CreateStoryMutationFn = Apollo.MutationFunction<CreateStoryMutation, CreateStoryMutationVariables>;
 
 /**
@@ -566,6 +615,7 @@ export type CreateStoryMutationFn = Apollo.MutationFunction<CreateStoryMutation,
  *   variables: {
  *      title: // value for 'title'
  *      content: // value for 'content'
+ *      imgUrl: // value for 'imgUrl'
  *      isPublished: // value for 'isPublished'
  *   },
  * });
@@ -577,17 +627,12 @@ export type CreateStoryMutationHookResult = ReturnType<typeof useCreateStoryMuta
 export type CreateStoryMutationResult = Apollo.MutationResult<CreateStoryMutation>;
 export type CreateStoryMutationOptions = Apollo.BaseMutationOptions<CreateStoryMutation, CreateStoryMutationVariables>;
 export const UpdateStoryDocument = gql`
-    mutation UpdateStory($id: String!, $title: String!, $content: String!, $isPublished: Boolean = false) {
-  updateStory(id: $id, title: $title, content: $content, isPublished: $isPublished) {
-    id
-    title
-    content
-    view
-    clap
-    createdAt
+    mutation UpdateStory($id: String!, $title: String!, $content: String!, $imgUrl: String, $isPublished: Boolean = false) {
+  updateStory(id: $id, title: $title, content: $content, imgUrl: $imgUrl, isPublished: $isPublished) {
+    ...RegularStory
   }
 }
-    `;
+    ${RegularStoryFragmentDoc}`;
 export type UpdateStoryMutationFn = Apollo.MutationFunction<UpdateStoryMutation, UpdateStoryMutationVariables>;
 
 /**
@@ -606,6 +651,7 @@ export type UpdateStoryMutationFn = Apollo.MutationFunction<UpdateStoryMutation,
  *      id: // value for 'id'
  *      title: // value for 'title'
  *      content: // value for 'content'
+ *      imgUrl: // value for 'imgUrl'
  *      isPublished: // value for 'isPublished'
  *   },
  * });
@@ -649,6 +695,40 @@ export function useDeleteStoryMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DeleteStoryMutationHookResult = ReturnType<typeof useDeleteStoryMutation>;
 export type DeleteStoryMutationResult = Apollo.MutationResult<DeleteStoryMutation>;
 export type DeleteStoryMutationOptions = Apollo.BaseMutationOptions<DeleteStoryMutation, DeleteStoryMutationVariables>;
+export const CreateThumnailDocument = gql`
+    mutation CreateThumnail($image: Upload!) {
+  createThumnail(image: $image) {
+    success
+    message
+    url
+  }
+}
+    `;
+export type CreateThumnailMutationFn = Apollo.MutationFunction<CreateThumnailMutation, CreateThumnailMutationVariables>;
+
+/**
+ * __useCreateThumnailMutation__
+ *
+ * To run a mutation, you first call `useCreateThumnailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateThumnailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createThumnailMutation, { data, loading, error }] = useCreateThumnailMutation({
+ *   variables: {
+ *      image: // value for 'image'
+ *   },
+ * });
+ */
+export function useCreateThumnailMutation(baseOptions?: Apollo.MutationHookOptions<CreateThumnailMutation, CreateThumnailMutationVariables>) {
+        return Apollo.useMutation<CreateThumnailMutation, CreateThumnailMutationVariables>(CreateThumnailDocument, baseOptions);
+      }
+export type CreateThumnailMutationHookResult = ReturnType<typeof useCreateThumnailMutation>;
+export type CreateThumnailMutationResult = Apollo.MutationResult<CreateThumnailMutation>;
+export type CreateThumnailMutationOptions = Apollo.BaseMutationOptions<CreateThumnailMutation, CreateThumnailMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -687,6 +767,7 @@ export const GetAllStoriesForHomePageDocument = gql`
     id
     title
     content
+    thumbnail_image_url
     createdAt
   }
 }
@@ -719,14 +800,10 @@ export type GetAllStoriesForHomePageQueryResult = Apollo.QueryResult<GetAllStori
 export const GetAllStoryListByMeDocument = gql`
     query GetAllStoryListByMe($isPublished: Boolean = false) {
   getAllStoriesByMe(isPublished: $isPublished) {
-    id
-    title
-    content
-    createdAt
-    updatedAt
+    ...RegularStory
   }
 }
-    `;
+    ${RegularStoryFragmentDoc}`;
 
 /**
  * __useGetAllStoryListByMeQuery__
@@ -756,19 +833,14 @@ export type GetAllStoryListByMeQueryResult = Apollo.QueryResult<GetAllStoryListB
 export const GetStoryByStoryIdDocument = gql`
     query GetStoryByStoryId($id: String) {
   getStoryBy(id: $id) {
-    id
-    title
-    content
-    view
-    clap
-    createdAt
+    ...RegularStory
     user {
       firstName
       lastName
     }
   }
 }
-    `;
+    ${RegularStoryFragmentDoc}`;
 
 /**
  * __useGetStoryByStoryIdQuery__

@@ -2,9 +2,12 @@ import React from 'react'
 import { useIsAuth } from '../hooks/useIsAuth'
 import Layout from '../components/Layout'
 import styled from 'styled-components'
-import { useRouter } from 'next/router'
 import { toastNotification } from '../utils/toasters'
+import useStoryPreview from '../hooks/useStoryPreview'
 import useHandleInputStoryChange from '../hooks/useHandleInputStoryChange'
+import StoryPreview from '../components/StoryPreview'
+import { PublishBtn } from '../components/Buttons'
+import useRequests from '../hooks/useRequests'
 
 const TextArea = styled.textarea`
   ::placeholder {
@@ -17,10 +20,12 @@ type CreateStory = {}
 const CreateStory: React.FC<CreateStory> = ({}) => {
   useIsAuth()
 
-  const { inputs, handleInputChange, handleCreateStory, createStoryResponse } = useHandleInputStoryChange({ id: null })
+  const { inputs, handleInputChange } = useHandleInputStoryChange({})
+  const { previewMode, onTogglePreviewMode } = useStoryPreview()
+  const { handleCreateStory, createStoryResponse } = useRequests()
+
   const { title, content } = inputs
   const { loading, data } = createStoryResponse
-  const router = useRouter()
 
   const handleSave = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
@@ -28,37 +33,31 @@ const CreateStory: React.FC<CreateStory> = ({}) => {
       toastNotification.error('Please enter title and story please 😉')
       return;
     }
-    await handleCreateStory(false)
+    await handleCreateStory(title, content, false)
   }
 
-  const handlePublish = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePublish = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
-    if (!title || content.length < 30) {
-      toastNotification.error('Please enter title and story please 😉')
-      return;
-    }
-    else {
-      await handleCreateStory(true)
-      router.push('/stories/drafts')
-    }
+    onTogglePreviewMode()
   }
 
   return (
     <Layout>
-      <form className='px-56' onSubmit={handlePublish}>
+      <form className='px-56'>
         <div className='flex mb-4'>
             <button type='button' className='bg-gray-600 hover:bg-gray-700 text-white text-sm px-2 py-1 rounded block mr-3' onClick={handleSave}>
               Save
             </button>
-          <button type='submit' className='bg-green-600 hover:bg-green-700 text-white text-sm px-2 py-1 rounded block mr-3'>
+          <PublishBtn type="button" onClick={handlePublish}>
             Publish
-          </button>
+          </PublishBtn>
           {loading && <span>Loading..</span>}
           {!loading && data && <span>Saved</span>}
         </div>
-        <input type='text' name='title' className='pl-4 h-16 w-1/2 text-3xl border-l border-gray-600 focus:outline-none placeholder-gray-500' placeholder='Title' value={title} onChange={handleInputChange} />
+        <input type='text' name='title' className='pl-4 h-16 w-full text-3xl border-l border-gray-600 focus:outline-none placeholder-gray-500' placeholder='Title' value={title} onChange={handleInputChange} />
         <TextArea value={content} name='content' className='p-2 text-2xl focus:outline-none' onChange={handleInputChange} placeholder='Tell your story...' rows={40} cols={64} />
       </form>
+      <StoryPreview visible={previewMode} title={title} content={content} onTogglePreviewMode={onTogglePreviewMode} />
     </Layout>
   )
 }

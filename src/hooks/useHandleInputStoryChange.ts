@@ -1,132 +1,85 @@
-import { useState, useCallback, useEffect } from 'react'
-import { useGetStoryByStoryIdQuery, useUpdateStoryMutation, useCreateStoryMutation, CreateStoryMutation, UpdateStoryMutation } from '../../generated/graphql'
-import { useRouter } from 'next/router'
+import { useState, useEffect } from 'react'
+import { useGetStoryByStoryIdQuery } from '../../generated/graphql'
+import { NextRouter, useRouter } from 'next/router'
 import { compareObjectDeeply } from '../utils/compareObjectDeeply'
-import { toastNotification } from '../utils/toasters'
-import { MutationResult } from '@apollo/client/react/types/types'
-import { FetchResult } from '@apollo/client/link/core/types'
+import useRequests from './useRequests'
 
 type Params = {
-  id?: string | null;
+  router?: NextRouter
 }
 
 type ReturnType = {
   inputs: {
     title: string,
-    content: string
+    content: string,
+    imgUrl: string
   };
   storyLoading?: boolean;
-  handleCreateStory: (isPublished: boolean) => Promise<void>
-  handleUpdateStory: (isPublished: boolean) => Promise<FetchResult<UpdateStoryMutation, Record<string, any>, Record<string, any>>>
-  createStoryResponse: MutationResult<CreateStoryMutation>;
-  updateStoryResponse: MutationResult<UpdateStoryMutation>
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
-const useHandleInputStoryChange = ({ id } : Params) : ReturnType => {
-  const router = useRouter()
+const useHandleInputStoryChange = ({} : Params) : ReturnType => {
   const [inputs, setInputs] = useState({
     title: '',
     content: '',
+    imgUrl: '',
   })
+  const { title, content, imgUrl } = inputs
+  const router = useRouter()
+  const { id } = router.query
 
-  const [createStory, createStoryResponse] = useCreateStoryMutation()
-  const [updateStory, updateStoryResponse] = useUpdateStoryMutation()
-
-  const { title, content } = inputs
-
-
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.currentTarget
-    setInputs({
-      ...inputs,
-      [name]: value,
-    })
-  }, [inputs])
-
-  const handleUpdateStory = async (isPublished: boolean) => {
-    return await updateStory({
-      variables: { id: id as string, title, content, isPublished },
-      update: (cache) => {
-        cache.evict({})
-      },
-    })
-  }
-
-  const handleCreateStory = async (isPublished: boolean) => {
-    return await createStory({
-      variables: { title, content, isPublished },
-      update: (cache) => {
-        cache.evict({})
-      },
-    })
-    .then(res => {
-      if (!isPublished) {
-        const storyId = res.data?.createStory.id;
-        router.replace('/stories/edit/' + storyId)
-      }
-    })
-  }
-
-  const draftOrPublishStory = useCallback(
-    async (isPublished: boolean) => {
-      if (!title || content.length < 30) {
-        toastNotification.error('Please enter title and story please 😉')
-        return;
-      }
-      if (id) {
-        await handleUpdateStory(isPublished)
-      } else {
-        await handleCreateStory(isPublished)
-      }
-
-      if (isPublished) {
-        router.push('/stories/drafts')
-      }
-    }, [title, content])
-
-  const inputChanger = {
-    inputs,
-    createStoryResponse,
-    updateStoryResponse,
-    handleCreateStory,
-    handleUpdateStory,
-    handleInputChange
-  }
+  const { data: storyData, loading: storyLoading } = useGetStoryByStoryIdQuery({
+    variables: { id: id as string }
+  })
+  const { handleCreateStory, handleUpdateStory } = useRequests()
 
   let lastInputs = {
     title: '',
     content: ''
   }
 
-  if (!!id) {
-    const { data: storyData, loading: storyLoading } = useGetStoryByStoryIdQuery({ variables: { id }})
-  
-    useEffect(() => {
-      const dataFromServer = {
-        title: storyData?.getStoryBy.title!,
-        content: storyData?.getStoryBy.content!
-      }
-      lastInputs = dataFromServer
-      setInputs(dataFromServer)
-    }, [storyLoading])
-    return {
-      ...inputChanger,
-      storyLoading
+  useEffect(() => {
+    const dataFromServer = {
+      title: storyData?.getStoryBy.title!,
+      content: storyData?.getStoryBy.content!,
+      imgUrl: storyData?.getStoryBy.thumbnail_image_url!
     }
-  }
+    lastInputs = dataFromServer
+    setInputs(dataFromServer)
+  }, [storyLoading])
 
+  // Auto save
   useEffect(() => {
     const changed = !compareObjectDeeply(lastInputs, inputs)
     if (changed) {
       const timeoutId = setTimeout(() => {
-        draftOrPublishStory(false)
+        if (id) {
+          handleUpdateStory(id as string, title, content, false, imgUrl)
+        } else {
+          handleCreateStory(title, content, false, imgUrl)
+        }
       }, 10 * 1000)
       return () => clearTimeout(timeoutId)
     }
-  }, [title, content])
+  }, [inputs])
 
-  return inputChanger
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.currentTarget
+    setInputs({
+      ...inputs,
+      [name]: value,
+    })
+  }
+
+  const inputChanger = {
+    inputs,
+    handleInputChange
+  }
+
+  return {
+    ...inputChanger,
+    storyLoading
+  }
 }
 
 export default useHandleInputStoryChange

@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
-import Button from '../components/Buttons'
 
 const OpaqueLayer = styled.div`
   position: fixed;

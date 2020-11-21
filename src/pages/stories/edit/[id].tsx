@@ -6,6 +6,9 @@ import { useRouter } from 'next/router'
 import { Helmet } from 'react-helmet-async'
 import useHandleInputStoryChange from '../../../hooks/useHandleInputStoryChange'
 import { toastNotification } from '../../../utils/toasters'
+import useStoryPreview from '../../../hooks/useStoryPreview'
+import StoryPreview from '../../../components/StoryPreview'
+import useRequests from '../../../hooks/useRequests'
 
 const TextArea = styled.textarea`
   ::placeholder {
@@ -21,16 +24,17 @@ const EditStory: React.FC<EditStory> = ({}) => {
   const router = useRouter()
   const { id } = router.query
 
-  const { inputs,storyLoading, updateStoryResponse, handleUpdateStory, handleInputChange, } = useHandleInputStoryChange({ id: id as string })
+  const { inputs, storyLoading, handleInputChange } = useHandleInputStoryChange({})
+  const { previewMode, onTogglePreviewMode } = useStoryPreview()
+  const { handleUpdateStory, updateStoryResponse } = useRequests()
 
-  const { title, content } = inputs
+  const { title, content, imgUrl } = inputs
 
   const { loading, data } = updateStoryResponse
 
   const handlePublish = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    await handleUpdateStory(true)
-    router.push('/stories/' + id)
+    onTogglePreviewMode()
   }
 
   const handleSave = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -39,7 +43,7 @@ const EditStory: React.FC<EditStory> = ({}) => {
       toastNotification.error('Please enter title and story please 😉')
       return;
     }
-    await handleUpdateStory(false)
+    await handleUpdateStory(id as string, title, content, false)
   }
 
   if (storyLoading && !data) {
@@ -63,10 +67,11 @@ const EditStory: React.FC<EditStory> = ({}) => {
             {loading && <span>Loading..</span>}
             {!loading && data && <span>Saved</span>}
           </div>
-          <input type='text' name='title' className='pl-4 h-16 w-1/2 text-3xl border-l border-gray-600 focus:outline-none placeholder-gray-500' placeholder='Title' defaultValue={title} onChange={handleInputChange} />
+          <input type='text' name='title' className='pl-4 h-16 w-full text-3xl border-l border-gray-600 focus:outline-none placeholder-gray-500' placeholder='Title' defaultValue={title} onChange={handleInputChange} />
           <TextArea name='content' defaultValue={content} className='p-2 text-2xl focus:outline-none' onChange={handleInputChange} placeholder='Tell your story...' rows={40} cols={64} />
         </form>
       </Layout>
+      <StoryPreview visible={previewMode} title={title} content={content} imgUrl={imgUrl} onTogglePreviewMode={onTogglePreviewMode} />
     </>
   )
 }
