@@ -77,7 +77,7 @@ type StoryPreviewProps = {
   visible: boolean;
   title: string;
   content: string;
-  imgUrl: string;
+  imgUrl?: string;
   onTogglePreviewMode: () => any;
 }
 
@@ -86,7 +86,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({ visible, title, content, im
     document.body.style.overflowY = visible ? 'hidden' : 'initial';
   }, [visible])
 
-  const { handleFile, createThumbnailResponse } = useStoryPreview()
+  const { handleUploadFile, createThumbnailResponse } = useStoryPreview()
   const { loading, error, data } = createThumbnailResponse
 
   const { handleCreateStory } = useRequests()
@@ -104,6 +104,55 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({ visible, title, content, im
     toastNotification.error('Failed to upload file')
   }
 
+  let imageBody = null
+
+  if (imgUrl) {
+    imageBody = (
+      <ImageWrapper>
+        <label className="text-gray-600 underline mb-2 cursor-pointer">
+          <input type="file" className="hidden" accept="image/png, image/jpeg, image/jpg" onChange={handleUploadFile} />
+          Reupload
+        </label>
+        <Thumbnail src={imgUrl} />
+      </ImageWrapper>
+    )
+  }
+  
+  if (loading) {
+    imageBody = (
+      <>
+        <ImageForNoImage />
+        <span className="inline-flex rounded-md shadow-sm cursor-not-allowed">
+          <span className="mt-3 bg-green-600 hover:bg-green-700 text-white text-sm px-2 py-1 rounded">
+            Processing...
+          </span>
+        </span>
+      </>
+    )
+  }
+  
+  if (data) {
+    imageBody = (
+      <ImageWrapper>
+        <label className="text-gray-600 underline mb-2 cursor-pointer">
+          <input type="file" className="hidden" accept="image/png, image/jpeg, image/jpg" onChange={handleUploadFile} />
+          Reupload
+        </label>
+        <Thumbnail src={data.createThumnail.url} />
+      </ImageWrapper>
+    )
+  }
+  if (!loading && !data && !imgUrl) {
+    imageBody = (
+      <>
+        <ImageForNoImage />
+        <label className="mt-3 bg-green-600 hover:bg-green-700 text-white text-sm px-2 py-1 rounded block cursor-pointer">
+          <input type="file" className="hidden" accept="image/png, image/jpeg, image/jpg" onChange={handleUploadFile} /> Upload Thumbnail
+        </label>
+      </>
+    )
+  }
+
   return (
     <>
       <OpaqueLayer />
@@ -113,42 +162,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({ visible, title, content, im
             <h1 className="text-4xl">Story Preview</h1>
           </div>
           <ThumbnailImageBlock hasImg={!!hasImg}>
-            {!loading && !data && !imgUrl && (
-              <>
-                <ImageForNoImage />
-                <label className="mt-3 bg-green-600 hover:bg-green-700 text-white text-sm px-2 py-1 rounded block cursor-pointer">
-                  <input type="file" className="hidden" accept="image/png, image/jpeg, image/jpg" onChange={handleFile} /> Upload Thumbnail
-                </label>
-              </>
-            )}
-            {loading && !data && !imgUrl && (
-              <>
-                <ImageForNoImage />
-                <span className="inline-flex rounded-md shadow-sm cursor-not-allowed">
-                  <span className="mt-3 bg-green-600 hover:bg-green-700 text-white text-sm px-2 py-1 rounded">
-                    Processing...
-                  </span>
-                </span>
-              </>
-            )}
-            {!loading && data && !imgUrl && (
-              <ImageWrapper>
-                <label className="text-gray-600 underline mb-2 cursor-pointer">
-                  <input type="file" className="hidden" accept="image/png, image/jpeg, image/jpg" onChange={handleFile} />
-                  Reupload
-                </label>
-                <Thumbnail src={data.createThumnail.url} />
-              </ImageWrapper>
-            )}
-            {imgUrl && (
-              <ImageWrapper>
-                <label className="text-gray-600 underline mb-2 cursor-pointer">
-                  <input type="file" className="hidden" accept="image/png, image/jpeg, image/jpg" onChange={handleFile} />
-                  Reupload
-                </label>
-                <Thumbnail src={imgUrl} />
-              </ImageWrapper>
-            )}
+            {imageBody}
           </ThumbnailImageBlock>
           <PreviewContentBlock>
             <div className="border-b border-gray-500 p-2 mb-4">

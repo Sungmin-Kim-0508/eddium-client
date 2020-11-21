@@ -4,25 +4,25 @@ import { NextRouter, useRouter } from 'next/router'
 import { compareObjectDeeply } from '../utils/compareObjectDeeply'
 import useRequests from './useRequests'
 
-type Params = {
-  router?: NextRouter
+type DefaultStateType = {
+  title: string;
+  content: string;
+  imgUrl: string;
+  isPublished: boolean;
 }
 
 type ReturnType = {
-  inputs: {
-    title: string,
-    content: string,
-    imgUrl: string
-  };
+  inputs: DefaultStateType;
   storyLoading?: boolean;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
-const useHandleInputStoryChange = ({} : Params) : ReturnType => {
+const useHandleInputStoryChange = () : ReturnType => {
   const [inputs, setInputs] = useState({
     title: '',
     content: '',
     imgUrl: '',
+    isPublished: false
   })
   const { title, content, imgUrl } = inputs
   const router = useRouter()
@@ -33,19 +33,26 @@ const useHandleInputStoryChange = ({} : Params) : ReturnType => {
   })
   const { handleCreateStory, handleUpdateStory } = useRequests()
 
-  let lastInputs = {
+  let lastInputs: DefaultStateType = {
     title: '',
-    content: ''
+    content: '',
+    imgUrl: '',
+    isPublished: false
   }
 
+  // Change state after data comes from server
   useEffect(() => {
-    const dataFromServer = {
-      title: storyData?.getStoryBy.title!,
-      content: storyData?.getStoryBy.content!,
-      imgUrl: storyData?.getStoryBy.thumbnail_image_url!
+    // States are changed ONLY when edit-page is rendered -> This case should be when router.query.id is given
+    if (id) {
+      const dataFromServer: DefaultStateType = {
+        title: storyData?.getStoryBy.title!,
+        content: storyData?.getStoryBy.content!,
+        imgUrl: storyData?.getStoryBy.thumbnail_image_url!,
+        isPublished: storyData?.getStoryBy.isPublished!
+      }
+      lastInputs = dataFromServer
+      setInputs(dataFromServer)
     }
-    lastInputs = dataFromServer
-    setInputs(dataFromServer)
   }, [storyLoading])
 
   // Auto save

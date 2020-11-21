@@ -4,29 +4,29 @@ import { useCreateThumnailMutation } from '../../generated/graphql'
 const useStoryPreview = () => {
   const [previewMode, setPreviewMode] = useState(false)
   const [uploadImage, createThumbnailResponse] = useCreateThumnailMutation()
-  let imgUrl = null
+  let imgFile = null;
+  let imgUrl = ''
   const { loading, error, data } = createThumbnailResponse
 
-  let imgFile = null;
   useEffect(() => {
     if (error) {
     } else {
     }
   }, [loading])
 
-  const handleFile = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUploadFile = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target
     if (!files) return;
     const [file] = files;
     await uploadImage({ variables: { image: file }})
-    imgUrl = data?.createThumnail.url
+    imgUrl = data?.createThumnail.url!
     imgFile = file
   }, [previewMode, imgFile])
 
 
   const onTogglePreviewMode = useCallback(() => {
     setPreviewMode(!previewMode)
-    imgUrl = null
+    imgUrl = ''
     imgFile = null
   }, [previewMode])
   return {
@@ -34,7 +34,7 @@ const useStoryPreview = () => {
     onTogglePreviewMode,
     imgUrl,
     imgFile,
-    handleFile,
+    handleUploadFile,
     createThumbnailResponse
   }
 }

@@ -24,26 +24,30 @@ const EditStory: React.FC<EditStory> = ({}) => {
   const router = useRouter()
   const { id } = router.query
 
-  const { inputs, storyLoading, handleInputChange } = useHandleInputStoryChange({})
+  const { inputs, storyLoading, handleInputChange } = useHandleInputStoryChange()
   const { previewMode, onTogglePreviewMode } = useStoryPreview()
   const { handleUpdateStory, updateStoryResponse } = useRequests()
 
-  const { title, content, imgUrl } = inputs
+  const { title, content, imgUrl, isPublished } = inputs
 
   const { loading, data } = updateStoryResponse
 
   const handlePublish = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!title) {
+      toastNotification.error('Please enter title please 😉')
+      return;
+    }
+    if (content.length < 30) {
+      toastNotification.error('Could you please enter more than 30 words on your story? 😉')
+      return;
+    }
     onTogglePreviewMode()
   }
 
   const handleSave = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
-    if (!title || content.length < 30) {
-      toastNotification.error('Please enter title and story please 😉')
-      return;
-    }
-    await handleUpdateStory(id as string, title, content, false)
+    await handleUpdateStory(id as string, title, content, isPublished, imgUrl)
   }
 
   if (storyLoading && !data) {

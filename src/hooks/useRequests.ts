@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import { useCreateStoryMutation, useUpdateStoryMutation } from "../../generated/graphql"
+import { toastNotification } from '../utils/toasters'
 
 const useRequests = () => {
   const router = useRouter()
@@ -17,8 +18,10 @@ const useRequests = () => {
       if (!isPublished) {
         const storyId = res.data?.createStory.id;
         router?.replace('/stories/edit/' + storyId)
+        toastNotification.success('Your story has saved! 👍')
       } else {
         router?.replace('/stories/drafts')
+        toastNotification.success('Successfully Publish! 👏')
       }
     })
   }

@@ -382,7 +382,7 @@ export type RegularUserFragment = (
 
 export type RegularStoryFragment = (
   { __typename?: 'Story' }
-  & Pick<Story, 'id' | 'title' | 'content' | 'view' | 'clap' | 'thumbnail_image_url' | 'createdAt' | 'updatedAt'>
+  & Pick<Story, 'id' | 'title' | 'content' | 'view' | 'clap' | 'isPublished' | 'thumbnail_image_url' | 'createdAt' | 'updatedAt'>
 );
 
 export const RegularUserFragmentDoc = gql`
@@ -400,6 +400,7 @@ export const RegularStoryFragmentDoc = gql`
   content
   view
   clap
+  isPublished
   thumbnail_image_url
   createdAt
   updatedAt

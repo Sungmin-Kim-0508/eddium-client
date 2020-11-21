@@ -111,6 +111,7 @@ fragment RegularStory on Story {
   content,
   view,
   clap,
+  isPublished,
   thumbnail_image_url,
   createdAt,
   updatedAt
