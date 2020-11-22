@@ -15,6 +15,7 @@ module.exports = {
         'accent-1': '#333',
         'mediumPrimary': '#e6f7ef',
         'mediumContent': '#292929',
+        'mediumBlack': '#191919',
         'mediumGray': '#757575'
       },
       height: {

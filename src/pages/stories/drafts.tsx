@@ -10,8 +10,17 @@ import { Down } from '../../icons/icons'
 import useDeleteStory from '../../hooks/useDeleteStories'
 import DropdownTransition, { Anchor } from '../../components/DropdownTransition'
 import PopupOKCancel from '../../components/PopupOKCancel'
+import styled from 'styled-components'
 
 dayjs.extend(relativeTime)
+
+const Paragraph = styled.p`
+  color: #757575;
+`
+const StyledDate = styled.span`
+  color: #757575;
+  font-size: 14px;
+`
 
 type DraftsProps = {}
 
@@ -24,34 +33,49 @@ const Drafts: React.FC<DraftsProps> = ({}) => {
 
   const { askRemove, onAskDelete, onCancelRemove, onConfirmRemove } = useDeleteStory()
 
+  let body = null;
+
+  if (storyLoading) {
+    body = (
+      <div>Loading...</div>
+    )
+  }
+  if (storyList?.getAllStoriesByMe.length! === 0) {
+    body = (
+      <div>No drafted stories</div>
+    )
+  }
+  if (storyList?.getAllStoriesByMe.length! > 0) {
+    body = (
+      storyList?.getAllStoriesByMe.map((story) => (
+        <div key={story.id} className='py-4 border-b-2'>
+          <a className="font-bold text-mediumBlack">{story.title}</a>
+          <p className="text-mediumGray">{story.content}</p>
+          <div className='flex'>
+            <StyledDate className='mr-3'>Created At {dayjs(parseInt(story.createdAt)).fromNow()}</StyledDate>
+            <div className='relative'>
+              <DropdownTransition BtnFigure={() => <Down />}>
+                <Anchor href='/stories/edit/[id]' as={`/stories/edit/${story.id}`}>
+                  Edit Story
+                </Anchor>
+                <button className="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out" onClick={() => onAskDelete(story.id)}>
+                  Delete Story
+                </button>
+              </DropdownTransition>
+            </div>
+          </div>
+        </div>
+      ))
+    )
+  }
+
   return (
     <Layout>
       <StoryListLayout>
-        {storyLoading && <div>Loading...</div>}
-        {!storyLoading && storyList?.getAllStoriesByMe.length! === 0 && <div>No drafted stories</div>}
-        {!storyLoading && storyList?.getAllStoriesByMe.length! > 0 &&
-          storyList?.getAllStoriesByMe.map((story) => (
-            <div key={story.id} className='py-4 border-b-2'>
-              <a>{story.title}</a>
-              <p>{story.content}</p>
-              <div className='flex'>
-                <span className='mr-3'>Created At {dayjs(parseInt(story.createdAt)).fromNow()}</span>
-                <div className='relative'>
-                  <DropdownTransition BtnFigure={() => <Down />}>
-                    <Anchor href='/stories/edit/[id]' as={`/stories/edit/${story.id}`}>
-                      Edit Story
-                    </Anchor>
-                    <button className="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out" onClick={() => onAskDelete(story.id)}>
-                      Delete Story
-                    </button>
-                  </DropdownTransition>
-                </div>
-              </div>
-            </div>
-          ))}
-          <PopupOKCancel title="Delete story" confirmLabel="Delete" visible={askRemove} onCancel={onCancelRemove} onConfirm={onConfirmRemove}>
-            Are you sure you want to delete this story?
-          </PopupOKCancel>
+        {body}
+        <PopupOKCancel title="Delete story" confirmLabel="Delete" visible={askRemove} onCancel={onCancelRemove} onConfirm={onConfirmRemove}>
+          Are you sure you want to delete this story?
+        </PopupOKCancel>
       </StoryListLayout>
     </Layout>
   )
