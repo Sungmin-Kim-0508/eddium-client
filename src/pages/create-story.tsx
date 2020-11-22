@@ -4,7 +4,7 @@ import Layout from '../components/Layout'
 import styled from 'styled-components'
 import { toastNotification } from '../utils/toasters'
 import useStoryPreview from '../hooks/useStoryPreview'
-import useHandleInputStoryChange from '../hooks/useHandleInputStoryChange'
+import useHandleInputStoryChange, { DefaultStateType } from '../hooks/useHandleInputStoryChange'
 import StoryPreview from '../components/StoryPreview'
 import { PublishBtn } from '../components/Buttons'
 import useRequests from '../hooks/useRequests'
@@ -20,14 +20,7 @@ type CreateStory = {}
 const CreateStory: React.FC<CreateStory> = ({}) => {
   useIsAuth()
 
-  const [inputs, setInputs] = useState({
-    title: '',
-    content: '',
-    imgUrl: '',
-    isPublished: false
-  })
-
-  const { handleInputChange } = useHandleInputStoryChange()
+  const { inputs, handleInputChange } = useHandleInputStoryChange()
   const { previewMode, onTogglePreviewMode } = useStoryPreview()
   const { handleCreateStory, createStoryResponse } = useRequests()
 

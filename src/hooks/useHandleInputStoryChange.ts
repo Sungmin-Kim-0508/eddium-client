@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useGetStoryByStoryIdQuery } from '../../generated/graphql'
-import { NextRouter, useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import { compareObjectDeeply } from '../utils/compareObjectDeeply'
 import useRequests from './useRequests'
 
-type DefaultStateType = {
+export type DefaultStateType = {
   title: string;
   content: string;
   imgUrl: string;
@@ -18,7 +18,7 @@ type ReturnType = {
 }
 
 const useHandleInputStoryChange = () : ReturnType => {
-  const [inputs, setInputs] = useState({
+  const [inputs, setInputs] = useState<DefaultStateType>({
     title: '',
     content: '',
     imgUrl: '',
