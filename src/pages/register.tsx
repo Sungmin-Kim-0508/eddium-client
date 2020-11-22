@@ -7,7 +7,6 @@ import { MeDocument, MeQuery, useRegisterMutation } from '../generated/graphql';
 import { toastNotification } from '../utils/toasters'
 import Link from 'next/link';
 import { useRouter } from 'next/router'
-import { useIsAuth } from '../hooks/useIsAuth';
 
 type RegisterProps = {
 }
@@ -31,7 +30,6 @@ const validationSchema = yup.object({
 const Register: React.FC<RegisterProps> = ({}) => {
   const [registerUser] = useRegisterMutation();
   const router = useRouter();
-  useIsAuth()
   
   return (
     <Layout bgColor="bg-mediumPrimary">

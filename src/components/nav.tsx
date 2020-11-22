@@ -94,9 +94,9 @@ export default function Nav() {
                     <MenuButton
                       isLoading={logoutLoading}
                       onClick={async () => {
+                      router.replace('/')
                       await logout()
                       await apolloClient.resetStore()
-                      router.replace('/')
                     }}>Log out</MenuButton>
                   </DropdownTransition>
                 </div>
