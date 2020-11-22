@@ -14,9 +14,6 @@ import styled from 'styled-components'
 
 dayjs.extend(relativeTime)
 
-const Paragraph = styled.p`
-  color: #757575;
-`
 const StyledDate = styled.span`
   color: #757575;
   font-size: 14px;
