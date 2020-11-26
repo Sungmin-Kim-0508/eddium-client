@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import useStoryPreview from '../hooks/useStoryPreview'
+import { useRouter } from 'next/router'
 import { ImageForNoImage } from '../icons/icons'
 import { toastNotification } from '../utils/toasters'
 import { PublishBtn } from './Buttons'
@@ -77,11 +78,13 @@ type StoryPreviewProps = {
   visible: boolean;
   title: string;
   content: string;
+  storyId?: string;
   imgUrl?: string;
   onTogglePreviewMode: () => any;
 }
 
-const StoryPreview: React.FC<StoryPreviewProps> = ({ visible, title, content, imgUrl, onTogglePreviewMode }) => {
+const StoryPreview: React.FC<StoryPreviewProps> = ({ visible, title, content, imgUrl, storyId, onTogglePreviewMode }) => {
+  const router = useRouter()
   useEffect(() => {
     document.body.style.overflowY = visible ? 'hidden' : 'initial';
   }, [visible])
@@ -89,11 +92,18 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({ visible, title, content, im
   const { handleUploadFile, createThumbnailResponse } = useStoryPreview()
   const { loading, error, data } = createThumbnailResponse
 
-  const { handleCreateStory } = useRequests()
+  const { handlePublishStory } = useRequests()
 
   const handlePublish = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    await handleCreateStory(title, content, true, data?.createThumnail.url)
+    handlePublishStory(title, content, true, data?.createThumnail.url, storyId)
+      .then(() => {
+        toastNotification.success('Successfully published! 👏')
+        router.push('/stories/drafts')
+      })
+      .catch(() => {
+        toastNotification.error('Error occurs but we will fix it. 🤞')
+      })
   }
 
   const hasImg = !!data || !!imgUrl

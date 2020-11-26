@@ -1,10 +1,11 @@
 import React from 'react'
 import Layout from '../../components/Layout'
+import Head from 'next/head'
 import { useIsAuth } from '../../hooks/useIsAuth'
 import { useRouter } from 'next/router'
-import { Helmet } from 'react-helmet-async'
 import { useGetStoryByStoryIdQuery } from '../../../generated/graphql'
 import { Bookmarked, Clap, FacebookSmall, TwitterSmall } from '../../icons/icons'
+import Image from 'next/image'
 import dayjs from 'dayjs'
 
 type StoryDetailProps = {}
@@ -20,15 +21,15 @@ const StoryDetail: React.FC<StoryDetailProps> = ({}) => {
     return <Layout>Loading...</Layout>
   }
 
-  const { title, content, clap, createdAt, user } = storyData?.getStoryBy!
+  const { title, content, clap, createdAt, user, thumbnail_image_url } = storyData?.getStoryBy!
 
   return (
     <>
-      <Helmet>
+      <Head>
         <title>{storyData?.getStoryBy.title}</title>
-      </Helmet>
+      </Head>
       <Layout>
-        <div className="px-32 static text-mediumContent">
+        <div className="px-32 relative text-mediumContent mb-32">
           <section className="fixed left-0 ml-20">
             <div className="mb-2">
               <button className="mr-2">
@@ -43,6 +44,11 @@ const StoryDetail: React.FC<StoryDetailProps> = ({}) => {
             </div>
           </section>
           <div className="relative mb-6">
+            {thumbnail_image_url ? (
+              <div className="flex justify-center">
+                <Image src={thumbnail_image_url} width={550} height={400} />
+              </div>
+            ) : null}
             <h1 className="text-5xl font-mediumSecond">{title}</h1>
             <div className="flex justify-between">
               <div className="flex flex-col">

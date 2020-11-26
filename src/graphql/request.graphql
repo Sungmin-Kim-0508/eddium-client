@@ -76,8 +76,26 @@ query GetAllStoriesForHomePage {
     id,
     title,
     content,
+    view,
+    createdAt,
     thumbnail_image_url,
-    createdAt
+    user {
+      firstName,
+      lastName
+    }
+  }
+}
+
+query GetAllStoriesWithPagination($page: Float = 1) {
+  getAllStoriesWithPagination(page: $page) {
+    stories {
+      ...RegularStory
+      user {
+        firstName,
+        lastName
+      }
+    },
+    totalCount
   }
 }
 
@@ -92,6 +110,22 @@ query GetStoryByStoryId($id: String) {
     ...RegularStory
     user {
       firstName,
+      lastName
+    }
+  }
+}
+
+query SearchStory($keyword: String!) {
+  searchStories(keyword: $keyword) {
+    id,
+    title,
+    content,
+    view,
+    clap,
+    thumbnail_image_url,
+    createdAt
+    user {
+      firstName
       lastName
     }
   }

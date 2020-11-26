@@ -24,7 +24,7 @@ const useHandleInputStoryChange = () : ReturnType => {
     imgUrl: '',
     isPublished: false
   })
-  const { title, content, imgUrl } = inputs
+  const { title, content, imgUrl, isPublished } = inputs
   const router = useRouter()
   const { id } = router.query
 
@@ -61,9 +61,9 @@ const useHandleInputStoryChange = () : ReturnType => {
     if (changed) {
       const timeoutId = setTimeout(() => {
         if (id) {
-          handleUpdateStory(id as string, title, content, false, imgUrl)
+          handleUpdateStory(id as string, title, content, isPublished, imgUrl)
         } else {
-          handleCreateStory(title, content, false, imgUrl)
+          handleCreateStory(title, content, isPublished, imgUrl)
         }
       }, 10 * 1000)
       return () => clearTimeout(timeoutId)

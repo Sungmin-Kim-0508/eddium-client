@@ -3,7 +3,7 @@ import { useIsAuth } from '../../../hooks/useIsAuth'
 import Layout from '../../../components/Layout'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
-import { Helmet } from 'react-helmet-async'
+import Head from 'next/head'
 import useHandleInputStoryChange from '../../../hooks/useHandleInputStoryChange'
 import { toastNotification } from '../../../utils/toasters'
 import useStoryPreview from '../../../hooks/useStoryPreview'
@@ -56,9 +56,9 @@ const EditStory: React.FC<EditStory> = ({}) => {
 
   return (
     <>
-      <Helmet>
+      <Head>
         <title>{title ? `Writing about ${title}` : `Writing my story`}</title>
-      </Helmet>
+      </Head>
       <Layout>
         <form className='lg:px-56' onSubmit={handlePublish}>
           <div className='flex mb-4'>
@@ -75,7 +75,7 @@ const EditStory: React.FC<EditStory> = ({}) => {
           <TextArea name='content' defaultValue={content} className='p-2 text-2xl focus:outline-none' onChange={handleInputChange} placeholder='Tell your story...' rows={40} cols={64} />
         </form>
       </Layout>
-      <StoryPreview visible={previewMode} title={title} content={content} imgUrl={imgUrl} onTogglePreviewMode={onTogglePreviewMode} />
+      <StoryPreview visible={previewMode} title={title} content={content} imgUrl={imgUrl} storyId={id as string} onTogglePreviewMode={onTogglePreviewMode} />
     </>
   )
 }

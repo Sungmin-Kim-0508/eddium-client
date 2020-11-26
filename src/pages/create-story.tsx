@@ -24,7 +24,7 @@ const CreateStory: React.FC<CreateStory> = ({}) => {
   const { previewMode, onTogglePreviewMode } = useStoryPreview()
   const { handleCreateStory, createStoryResponse } = useRequests()
 
-  const { title, content } = inputs
+  const { title, content, isPublished } = inputs
   const { loading, data } = createStoryResponse
 
   const handleSave = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

@@ -18,9 +18,16 @@ export type Query = {
   me?: Maybe<User>;
   findBy?: Maybe<User>;
   getAllStories: Array<Story>;
+  getAllStoriesWithPagination: StoryPaginationResponse;
   getAllStoriesByUserId: Array<Story>;
   getAllStoriesByMe: Array<Story>;
+  searchStories: Array<Story>;
   getStoryBy: Story;
+};
+
+
+export type QueryGetAllStoriesWithPaginationArgs = {
+  page?: Maybe<Scalars['Float']>;
 };
 
 
@@ -32,6 +39,11 @@ export type QueryGetAllStoriesByUserIdArgs = {
 
 export type QueryGetAllStoriesByMeArgs = {
   isPublished?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type QuerySearchStoriesArgs = {
+  keyword: Scalars['String'];
 };
 
 
@@ -79,6 +91,12 @@ export type SavedStory = {
   __typename?: 'SavedStory';
   id: Scalars['String'];
   storyId: Scalars['String'];
+};
+
+export type StoryPaginationResponse = {
+  __typename?: 'StoryPaginationResponse';
+  stories: Array<Story>;
+  totalCount: Scalars['Int'];
 };
 
 export type Mutation = {
@@ -341,8 +359,33 @@ export type GetAllStoriesForHomePageQuery = (
   { __typename?: 'Query' }
   & { getAllStories: Array<(
     { __typename?: 'Story' }
-    & Pick<Story, 'id' | 'title' | 'content' | 'thumbnail_image_url' | 'createdAt'>
+    & Pick<Story, 'id' | 'title' | 'content' | 'view' | 'createdAt' | 'thumbnail_image_url'>
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'firstName' | 'lastName'>
+    )> }
   )> }
+);
+
+export type GetAllStoriesWithPaginationQueryVariables = Exact<{
+  page?: Maybe<Scalars['Float']>;
+}>;
+
+
+export type GetAllStoriesWithPaginationQuery = (
+  { __typename?: 'Query' }
+  & { getAllStoriesWithPagination: (
+    { __typename?: 'StoryPaginationResponse' }
+    & Pick<StoryPaginationResponse, 'totalCount'>
+    & { stories: Array<(
+      { __typename?: 'Story' }
+      & { user?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'firstName' | 'lastName'>
+      )> }
+      & RegularStoryFragment
+    )> }
+  ) }
 );
 
 export type GetAllStoryListByMeQueryVariables = Exact<{
@@ -373,6 +416,23 @@ export type GetStoryByStoryIdQuery = (
     )> }
     & RegularStoryFragment
   ) }
+);
+
+export type SearchStoryQueryVariables = Exact<{
+  keyword: Scalars['String'];
+}>;
+
+
+export type SearchStoryQuery = (
+  { __typename?: 'Query' }
+  & { searchStories: Array<(
+    { __typename?: 'Story' }
+    & Pick<Story, 'id' | 'title' | 'content' | 'view' | 'clap' | 'thumbnail_image_url' | 'createdAt'>
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'firstName' | 'lastName'>
+    )> }
+  )> }
 );
 
 export type RegularUserFragment = (
@@ -768,8 +828,13 @@ export const GetAllStoriesForHomePageDocument = gql`
     id
     title
     content
-    thumbnail_image_url
+    view
     createdAt
+    thumbnail_image_url
+    user {
+      firstName
+      lastName
+    }
   }
 }
     `;
@@ -798,6 +863,46 @@ export function useGetAllStoriesForHomePageLazyQuery(baseOptions?: Apollo.LazyQu
 export type GetAllStoriesForHomePageQueryHookResult = ReturnType<typeof useGetAllStoriesForHomePageQuery>;
 export type GetAllStoriesForHomePageLazyQueryHookResult = ReturnType<typeof useGetAllStoriesForHomePageLazyQuery>;
 export type GetAllStoriesForHomePageQueryResult = Apollo.QueryResult<GetAllStoriesForHomePageQuery, GetAllStoriesForHomePageQueryVariables>;
+export const GetAllStoriesWithPaginationDocument = gql`
+    query GetAllStoriesWithPagination($page: Float = 1) {
+  getAllStoriesWithPagination(page: $page) {
+    stories {
+      ...RegularStory
+      user {
+        firstName
+        lastName
+      }
+    }
+    totalCount
+  }
+}
+    ${RegularStoryFragmentDoc}`;
+
+/**
+ * __useGetAllStoriesWithPaginationQuery__
+ *
+ * To run a query within a React component, call `useGetAllStoriesWithPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllStoriesWithPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllStoriesWithPaginationQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useGetAllStoriesWithPaginationQuery(baseOptions?: Apollo.QueryHookOptions<GetAllStoriesWithPaginationQuery, GetAllStoriesWithPaginationQueryVariables>) {
+        return Apollo.useQuery<GetAllStoriesWithPaginationQuery, GetAllStoriesWithPaginationQueryVariables>(GetAllStoriesWithPaginationDocument, baseOptions);
+      }
+export function useGetAllStoriesWithPaginationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllStoriesWithPaginationQuery, GetAllStoriesWithPaginationQueryVariables>) {
+          return Apollo.useLazyQuery<GetAllStoriesWithPaginationQuery, GetAllStoriesWithPaginationQueryVariables>(GetAllStoriesWithPaginationDocument, baseOptions);
+        }
+export type GetAllStoriesWithPaginationQueryHookResult = ReturnType<typeof useGetAllStoriesWithPaginationQuery>;
+export type GetAllStoriesWithPaginationLazyQueryHookResult = ReturnType<typeof useGetAllStoriesWithPaginationLazyQuery>;
+export type GetAllStoriesWithPaginationQueryResult = Apollo.QueryResult<GetAllStoriesWithPaginationQuery, GetAllStoriesWithPaginationQueryVariables>;
 export const GetAllStoryListByMeDocument = gql`
     query GetAllStoryListByMe($isPublished: Boolean = false) {
   getAllStoriesByMe(isPublished: $isPublished) {
@@ -868,3 +973,46 @@ export function useGetStoryByStoryIdLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetStoryByStoryIdQueryHookResult = ReturnType<typeof useGetStoryByStoryIdQuery>;
 export type GetStoryByStoryIdLazyQueryHookResult = ReturnType<typeof useGetStoryByStoryIdLazyQuery>;
 export type GetStoryByStoryIdQueryResult = Apollo.QueryResult<GetStoryByStoryIdQuery, GetStoryByStoryIdQueryVariables>;
+export const SearchStoryDocument = gql`
+    query SearchStory($keyword: String!) {
+  searchStories(keyword: $keyword) {
+    id
+    title
+    content
+    view
+    clap
+    thumbnail_image_url
+    createdAt
+    user {
+      firstName
+      lastName
+    }
+  }
+}
+    `;
+
+/**
+ * __useSearchStoryQuery__
+ *
+ * To run a query within a React component, call `useSearchStoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchStoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchStoryQuery({
+ *   variables: {
+ *      keyword: // value for 'keyword'
+ *   },
+ * });
+ */
+export function useSearchStoryQuery(baseOptions?: Apollo.QueryHookOptions<SearchStoryQuery, SearchStoryQueryVariables>) {
+        return Apollo.useQuery<SearchStoryQuery, SearchStoryQueryVariables>(SearchStoryDocument, baseOptions);
+      }
+export function useSearchStoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchStoryQuery, SearchStoryQueryVariables>) {
+          return Apollo.useLazyQuery<SearchStoryQuery, SearchStoryQueryVariables>(SearchStoryDocument, baseOptions);
+        }
+export type SearchStoryQueryHookResult = ReturnType<typeof useSearchStoryQuery>;
+export type SearchStoryLazyQueryHookResult = ReturnType<typeof useSearchStoryLazyQuery>;
+export type SearchStoryQueryResult = Apollo.QueryResult<SearchStoryQuery, SearchStoryQueryVariables>;

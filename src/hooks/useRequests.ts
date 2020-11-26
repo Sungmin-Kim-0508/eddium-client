@@ -35,11 +35,20 @@ const useRequests = () => {
     })
   }
 
+  const handlePublishStory = async (title: string, content: string, isPublished: boolean, imgUrl?: string, storyId?: string) => {
+    if (storyId) {
+      await handleUpdateStory(storyId as string, title, content, isPublished, imgUrl)
+    } else {
+      await handleCreateStory(title, content, isPublished, imgUrl)
+    }
+  }
+
   return {
     handleCreateStory,
     createStoryResponse,
     handleUpdateStory,
     updateStoryResponse,
+    handlePublishStory
   }
 }
 

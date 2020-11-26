@@ -6,9 +6,10 @@ import { toastNotification } from "../utils/toasters"
 import { useRouter } from 'next/router'
 import { Bell, Bookmarked, Magnifier, ToggleNavForMobile } from "../icons/icons"
 import DropdownTransition, { Anchor } from "../components/DropdownTransition"
+import Image from "next/image"
 
 const IconButton: React.FC = ({ children }) => (
-  <button className="p-1 mr-2 border-2 border-transparent rounded-full focus:bg-gray-300 transition duration-150 ease-in-out">
+  <button className="p-1 mr-2 border-2 border-transparent rounded-full focus:outline-none focus:bg-gray-300 transition duration-150 ease-in-out">
     {children}
   </button>
 )
@@ -44,14 +45,21 @@ export default function Nav() {
   const { data, error, loading: meLoading } = useMeQuery()
 
   const router = useRouter()
+
+  const handleKeydown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      const keyword = event.currentTarget.value
+      router.push('/search?q=' + keyword)
+    }
+  }
   
   if (meLoading === false && error) {
     toastNotification.error(error?.message)
   }
 
   return (
-    <nav className="bg-white">
-      <div className="max-w-6xl mx-auto px-2 sm:px-6 lg:px-8">
+    <nav className="bg-white mt-4">
+      <div className="max-w-6xl mx-auto px-2 sm:px-6 lg:px-16">
         <div className="relative flex items-center justify-between h-16">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
             <button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white transition duration-150 ease-in-out" aria-label="Main menu" aria-expanded="false">
@@ -60,14 +68,20 @@ export default function Nav() {
           </div>
           <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex-shrink-0">
-              {/* <img className="block lg:hidden h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-on-dark.svg" alt="eddium logo mobile" /> */}
-              <img className="hidden lg:block h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-logo-on-dark.svg" alt="eddium logo" />
+              <Link href="/">
+                <a>
+                  <Image className="hidden lg:block h-8 w-auto" src="https://eddium-dev.s3.us-east-2.amazonaws.com/thumbnail/1606343657123_medium_old_logo.jpg" alt="eddium logo" width={60} height={60} />
+                </a>
+              </Link>
             </div>
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <IconButton>
-              <Magnifier />
-            </IconButton>
+            <div className="flex border rounded px-1 py-1 mr-3">
+              <span>
+                <Magnifier />
+              </span>
+              <input type="text" className="focus:outline-none" onKeyDown={handleKeydown} />
+            </div>
             {data?.me === null && (
               <Link href="/register">
                 <a className="block px-4 py-2 bg-gray-800 text-white text-sm rounded">
@@ -94,7 +108,7 @@ export default function Nav() {
                     <MenuButton
                       isLoading={logoutLoading}
                       onClick={async () => {
-                      router.replace('/')
+                      router.push('/')
                       await logout()
                       await apolloClient.resetStore()
                     }}>Log out</MenuButton>

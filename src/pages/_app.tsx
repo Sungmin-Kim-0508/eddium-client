@@ -1,7 +1,6 @@
 import '../styles/index.css'
-import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink, ApolloLink } from '@apollo/client'
+import { ApolloClient, InMemoryCache, ApolloProvider, ApolloLink } from '@apollo/client'
 import { createUploadLink } from 'apollo-upload-client'
-import { HelmetProvider } from 'react-helmet-async'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -20,9 +19,7 @@ toast.configure()
 function MyApp({ Component, pageProps }: any) {
   return (
     <ApolloProvider client={client}>
-      <HelmetProvider>
-        <Component {...pageProps} />
-      </HelmetProvider>
+      <Component {...pageProps} />
     </ApolloProvider>
   )
 }
