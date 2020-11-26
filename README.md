@@ -33,6 +33,10 @@
 
 ![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/w2hv0u6tej4bjvc33ibb.gif)
 
+* **Search Stories**
+
+![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/xm572nnhz0ppbwp7myi5.gif)
+
 ## 👏 Why Medium Clone?
 
 * I really want to use GraphQL. Most of blog services have complicated formatted data and I think it is suitable to build blog service in order to learn GraphQL. Medium is one of the most well-known service, so I want to clone it.
