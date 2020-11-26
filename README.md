@@ -5,6 +5,9 @@
 - GraphQL with Apollo Client
 
 ## Demo
+* **Register**
+
+![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/1n3bzcs4pj2kyhis0ls6.gif)
 
 * **Login**
 
