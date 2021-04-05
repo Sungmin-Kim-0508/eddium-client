@@ -1,0 +1,158 @@
+####### Mutation #######
+mutation Register($firstName: String!, $lastName: String!, $email: String!, $password: String!, $confirmedPassword: String!) {
+  register(email: $email, firstName: $firstName, lastName: $lastName, password: $password, confirmedPassword: $confirmedPassword) {
+    user { id, firstName, lastName, email }
+    errors { field, message }
+  }
+}
+
+mutation Login($email: String!, $password: String!) {
+  login(email: $email, password: $password) {
+    user {
+      ...RegularUser,
+      savedStories {
+        storyId
+      }
+    }
+    errors { field, message }
+  }
+}
+
+mutation Logout {
+  logout
+}
+
+mutation ForgotPassword($email: String!) {
+  forgotPassword(email: $email)
+}
+
+mutation ChangePassword($password: String!, $confirmedPassword: String, $token: String) {
+  changePassword(password: $password, confirmedPassword: $confirmedPassword, token: $token) {
+    user { ...RegularUser }
+    errors { field, message }
+  }
+}
+
+mutation CreateStory($title: String!, $content: String!, $imgUrl: String $isPublished: Boolean = false) {
+  createStory(title: $title, content: $content, imgUrl: $imgUrl, isPublished: $isPublished)
+  {
+    ...RegularStory
+
+  }
+}
+
+mutation UpdateStory($id: String!, $title: String!, $content: String!, $imgUrl: String, $isPublished: Boolean = false) {
+  updateStory(id: $id, title: $title, content: $content, imgUrl: $imgUrl, isPublished: $isPublished)
+  {
+    ...RegularStory
+  }
+}
+
+mutation DeleteStory($id: String!) {
+  deleteStory(id: $id) {
+    isDelete,
+    msg
+  }
+}
+
+mutation CreateThumnail($image: Upload!) {
+  createThumnail(image: $image) {
+    success,
+    message,
+    url
+  }
+}
+
+
+####### Query #######
+query Me {
+  me {
+    ...RegularUser
+  }
+}
+
+query GetAllStoriesForHomePage {
+  getAllStories {
+    id,
+    title,
+    content,
+    view,
+    createdAt,
+    thumbnail_image_url,
+    user {
+      firstName,
+      lastName
+    }
+  }
+}
+
+query GetAllStoriesWithPagination($page: Float = 1) {
+  getAllStoriesWithPagination(page: $page) {
+    stories {
+      ...RegularStory
+      user {
+        firstName,
+        lastName
+      }
+    },
+    totalCount
+  }
+}
+
+query GetAllStoryListByMe($isPublished: Boolean = false) {
+  getAllStoriesByMe(isPublished: $isPublished) {
+    ...RegularStory
+  }
+}
+
+query GetStoryByStoryId($id: String) {
+  getStoryBy(id: $id) {
+    ...RegularStory
+    user {
+      firstName,
+      lastName
+    }
+  }
+}
+
+query SearchStory($keyword: String!) {
+  searchStories(keyword: $keyword) {
+    id,
+    title,
+    content,
+    view,
+    clap,
+    thumbnail_image_url,
+    createdAt
+    user {
+      firstName
+      lastName
+    }
+  }
+}
+
+####### Fragment
+fragment RegularUser on User {
+  id,
+  firstName,
+  lastName,
+  email
+}
+
+fragment RegularStory on Story {
+  id,
+  title,
+  content,
+  view,
+  clap,
+  isPublished,
+  thumbnail_image_url,
+  createdAt,
+  updatedAt
+}
+
+####### Type
+type FindStoryBy {
+  id: String,
+  title: String
+}

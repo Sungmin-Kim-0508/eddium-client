@@ -1,29 +1,47 @@
-# Tailwind CSS example
+# Eddium-Client
 
-This is an example of using [Tailwind CSS](https://tailwindcss.com) in a Next.js project.
+## Tech Stacks
+- Next.js + React Hooks + Typescript
+- GraphQL with Apollo Client
 
-## Deploy your own
+## Demo
+* **Register**
 
-Deploy the example using [Vercel](https://vercel.com):
+![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/1n3bzcs4pj2kyhis0ls6.gif)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/vercel/next.js/tree/canary/examples/with-tailwindcss)
+* **Login**
 
-## How to use
+![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/7rmhaablwasq0olgszuy.gif)
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
+* **Eddium Home**
 
-```bash
-npx create-next-app --example with-tailwindcss with-tailwindcss-app
-# or
-yarn create next-app --example with-tailwindcss with-tailwindcss-app
-```
+![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/t0auau9nc5oi3ct1jt7x.gif)
 
-Deploy it to the cloud with [Vercel](https://vercel.com/import?filter=next.js&utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+* **Story List**
 
-## Notes
+![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/pvv9tc18gi7lmhaziach.gif)
 
-This example is a basic starting point for using [Tailwind CSS](https://tailwindcss.com) with Next.js. It includes the following [PostCSS](https://github.com/postcss/postcss) plugins:
+* **Story Detail**
 
-- [postcss-preset-env](https://preset-env.cssdb.org/) - Adds stage 2+ features and autoprefixes
+![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/ai3kghvq5d7wejlknane.gif)
 
-To control the generated stylesheet's filesize, this example uses Tailwind CSS' [`purge` option](https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css) to remove unused CSS.
+* **Create Story**
+
+![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/zrlpnm58qnojs3guxs6x.gif)
+
+* **Edit Story**
+
+![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/w2hv0u6tej4bjvc33ibb.gif)
+
+* **Search Stories**
+
+![Alt Text](https://dev-to-uploads.s3.amazonaws.com/i/xm572nnhz0ppbwp7myi5.gif)
+
+## 👏 Why Medium Clone?
+
+* I really want to use GraphQL. Most of blog services have complicated formatted data and I think it is suitable to build blog service in order to learn GraphQL. Medium is one of the most well-known service, so I want to clone it.
+
+## Why I choose GraphQL?
+
+1) I want to learn what GraphQL has a couple of advantages, comparing to RESTful API.
+2) I want to see how Redux is replaced by GraphQL
